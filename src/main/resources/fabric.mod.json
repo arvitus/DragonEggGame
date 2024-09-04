@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "dragonegggame",
+  "version": "${version}",
+  "name": "DragonEggGame",
+  "description": "Dragon Egg Game",
+  "authors": [
+    "arvitus"
+  ],
+  "contact": {
+    "website": "https://github.com/arvitus/DragonEggGame",
+    "source": "https://github.com/arvitus/DragonEggGame"
+  },
+  "license": "GPL-3.0",
+  "icon": "assets/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "de.arvitus.dragonegggame.DragonEggGame"
+    ]
+  },
+  "mixins": [
+    "dragonegggame.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "~${minecraft_version}",
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*"
+  },
+  "suggests": {
+    "bluemap": "~5"
+  }
+}
