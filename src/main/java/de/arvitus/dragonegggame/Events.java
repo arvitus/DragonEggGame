@@ -1,6 +1,7 @@
 package de.arvitus.dragonegggame;
 
 import de.arvitus.dragonegggame.api.DragonEggAPI;
+import de.arvitus.dragonegggame.files.Data;
 import de.arvitus.dragonegggame.utils.ScheduledEvent;
 import de.arvitus.dragonegggame.utils.Utils;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
@@ -20,6 +21,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTask;
 
 import java.util.LinkedHashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 import static de.arvitus.dragonegggame.DragonEggGame.LOGGER;
@@ -32,6 +34,10 @@ public class Events {
             DragonEggGame.server = server;
             DragonEggAPI.init();
         });
+
+        ServerLifecycleEvents.SERVER_STOPPED.register(server ->
+            Optional.ofNullable(DragonEggAPI.getData()).ifPresent(Data::save)
+        );
 
         ServerTickEvents.END_SERVER_TICK.register(server ->
             new LinkedHashMap<>(SCHEDULED_ACTIONS).forEach((key, value) -> {
