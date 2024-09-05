@@ -56,9 +56,7 @@ public class Commands {
                         return 0;
                     })
             );
-        });
-
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            
             dispatcher.register(
                 literal("dragon_egg")
                     .requires(Permissions.require(Perms.BASE, true))

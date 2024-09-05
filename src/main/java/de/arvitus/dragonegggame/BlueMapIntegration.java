@@ -98,13 +98,13 @@ class BlueMapIntegration {
                     break;
             }
 
-            api.getWorld(data.world).ifPresent(world -> {
+            api.getWorld(data.world).ifPresent(world ->
                 api.getMaps().forEach(map -> {
                     Map<String, MarkerSet> markerSets = map.getMarkerSets();
                     if (map.getWorld().equals(world)) markerSets.put("dragon_egg", MARKER_SET);
                     else markerSets.remove("dragon_egg");
-                });
-            });
+                })
+            );
         } catch (Exception e) {
             LOGGER.error("Error during bluemap update", e);
         }
