@@ -24,11 +24,11 @@ public class Commands {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(
-                literal("deg")
-                    .requires(Permissions.require("deg.admin", 4))
+                literal(DragonEggGame.MOD_ID_ALIAS)
+                    .requires(Permissions.require(Perms.ADMIN, 4))
                     .then(
                         literal("reload")
-                            .requires(Permissions.require("deg.admin.reload", 4))
+                            .requires(Permissions.require(Perms.RELOAD, 4))
                             .executes(Commands::reload)
                     )
                     .executes(context -> {
