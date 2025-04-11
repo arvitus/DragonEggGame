@@ -47,15 +47,16 @@ public class Config {
     @Comment("Messages used throughout the mod")
     public Messages messages = new Messages();
     @Comment(
-        "The visibility of the dragon egg for each position type.\n" +
-        "Default: {\n" +
-        "   BLOCK=RANDOMIZED,\n // placed as Block" +
-        "   ITEM=EXACT,\n // item entity" +
-        "   FALLING_BLOCK=EXACT,\n // falling block entity" +
-        "   INVENTORY=EXACT,\n // block inventory" +
-        "   ENTITY=EXACT,\n // entity inventory" +
-        "   PLAYER=HIDDEN,\n // player inventory" +
-        "}"
+        """
+            The visibility of the dragon egg for each position type.
+            Default: {
+               BLOCK=RANDOMIZED, // placed as Block
+               ITEM=EXACT, // item entity
+               FALLING_BLOCK=EXACT, // falling block entity
+               INVENTORY=EXACT, // block inventory
+               ENTITY=EXACT, // entity inventory
+               PLAYER=HIDDEN, // player inventory
+            }"""
     )
     private Map<PositionType, VisibilityType> visibility = defaultVisibility;
 
