@@ -24,16 +24,16 @@ public class Placeholders {
         (ctx, arg) -> PlaceholderResult.value(APIUtils.getBearer()),
         modIdentifier("exact_pos"),
         (ctx, arg) -> {
-            if (DragonEggAPI.getData() == null) return PlaceholderResult.invalid("No Data");
             if (!Permissions.check(ctx.source(), Perms.EXACT_POS_PLACEHOLDER, 4))
                 return PlaceholderResult.invalid("No Permission");
+            if (DragonEggAPI.getData() == null) return PlaceholderResult.invalid("No Data");
             return PlaceholderResult.value(DragonEggAPI.getData().getBlockPos().toShortString());
         },
         modIdentifier("randomized_pos"),
         (ctx, arg) -> {
-            if (DragonEggAPI.getData() == null) return PlaceholderResult.invalid("No Data");
             if (!Permissions.check(ctx.source(), Perms.RANDOMIZED_POS_PLACEHOLDER, 4))
                 return PlaceholderResult.invalid("No Permission");
+            if (DragonEggAPI.getData() == null) return PlaceholderResult.invalid("No Data");
             return PlaceholderResult.value(DragonEggAPI.getData().getRandomizedPosition().toShortString());
         },
         modIdentifier("pos"),
