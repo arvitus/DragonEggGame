@@ -37,6 +37,7 @@ These are the rules we came up with for our server. Of course, you can change th
 
 - Automatic and recursive tracking of the Dragon Egg (even in shulker boxes inside chests)
 - Dragon Egg cannot be destroyed
+- Dragon Egg may teleport to spawn, when trying to destroy it or if it is otherwise lost or too far from a player
 - [Commands](#commands) for information about the game, the current bearer and the egg's (approximate) location
 - Global message when the egg is stolen
 - Extensive [customization options](#config-default)
