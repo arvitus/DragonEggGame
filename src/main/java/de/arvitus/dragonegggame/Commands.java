@@ -38,9 +38,12 @@ public class Commands {
                                 () ->
                                     Text.of(
                                         String.format(
-                                            "%s v%s",
+                                            "%s v%s by %s",
                                             meta.getName(),
-                                            meta.getVersion()
+                                            meta.getVersion(),
+                                            meta.getAuthors().stream().findFirst().isEmpty()
+                                                ? "Unknown"
+                                                : meta.getAuthors().stream().findFirst().get().getName()
                                         )
                                     ).copy().setStyle(
                                         Style.EMPTY.withClickEvent(new ClickEvent(
@@ -56,7 +59,7 @@ public class Commands {
                         return 0;
                     })
             );
-            
+
             dispatcher.register(
                 literal("dragon_egg")
                     .requires(Permissions.require(Perms.BASE, true))
