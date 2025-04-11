@@ -27,9 +27,9 @@ public class Config {
     private static final HoconConfigurationLoader LOADER = HoconConfigurationLoader.builder()
         .path(PATH)
         .prettyPrinting(true)
-        .defaultOptions(opts -> opts.serializers(build -> {
-            build.register(MessageString.class, new MessageString.Serializer(Messages.PARSER));
-        }))
+        .defaultOptions(opts -> opts.serializers(build ->
+            build.register(MessageString.class, new MessageString.Serializer(Messages.PARSER))
+        ))
         .build();
 
     @Comment("The radius that is used to randomize the dragon egg position.\nDefault: 25")
