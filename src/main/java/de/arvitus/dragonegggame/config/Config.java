@@ -135,9 +135,9 @@ public class Config {
         public MessageString info = new MessageString(
             PARSER,
             """
-
-
-
+                
+                
+                
                 <aqua><bold>The Dragon Egg Server Game</*>
                 <gray>----------------------------</*>
                 <yellow>Whoever has the %deg:item%, must place the %deg:item% <gold><hover show_text "\
