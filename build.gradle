@@ -1,5 +1,4 @@
 plugins {
-    id 'io.github.goooler.shadow' version '8.1.8'
     id 'fabric-loom' version "${loom_version}"
 }
 
@@ -36,20 +35,9 @@ dependencies {
 
     include modImplementation("me.lucko:fabric-permissions-api:${project.permissions_api_version}")
     include modImplementation("eu.pb4:placeholder-api:${project.placeholder_api_version}")
-    implementation shadow("org.spongepowered:configurate-hocon:${project.configurate_version}")
+    implementation includeInternal("org.spongepowered:configurate-hocon:${project.configurate_version}")
 
     compileOnly "de.bluecolored.bluemap:BlueMapAPI:${project.bluemap_api_version}"
-}
-
-shadowJar {
-    minimize()
-    archiveClassifier.set("shadow")
-    configurations = [project.configurations.shadow]
-    from sourceSets.main.output
-}
-
-remapJar {
-    from zipTree(shadowJar.archiveFile) dependsOn shadowJar
 }
 
 processResources {
