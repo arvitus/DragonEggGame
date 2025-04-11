@@ -17,6 +17,8 @@ import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
+import java.net.URI;
+
 import static de.arvitus.dragonegggame.DragonEggGame.CONFIG;
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -46,13 +48,15 @@ public class Commands {
                                                 : meta.getAuthors().stream().findFirst().get().getName()
                                         )
                                     ).copy().setStyle(
-                                        Style.EMPTY.withClickEvent(new ClickEvent(
-                                            ClickEvent.Action.OPEN_URL,
-                                            meta.getContact().get("source").orElse("")
-                                        )).withHoverEvent(new HoverEvent(
-                                            HoverEvent.Action.SHOW_TEXT,
-                                            Text.of("Click to view source")
-                                        ))),
+                                        Style.EMPTY
+                                            .withClickEvent(new ClickEvent.OpenUrl(URI.create(meta
+                                                .getContact()
+                                                .get("source")
+                                                .orElse("https://github.com/arvitus")
+                                            )))
+                                            .withHoverEvent(new HoverEvent.ShowText(
+                                                Text.of("Click to view source")
+                                            ))),
                                 false
                             );
                         });

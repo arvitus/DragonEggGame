@@ -57,12 +57,7 @@ public class Placeholders {
                 .empty()
                 .append(stack.getName())
                 .formatted(stack.getRarity().getFormatting())
-                .styled(style -> style.withHoverEvent(
-                    new HoverEvent(
-                        HoverEvent.Action.SHOW_ITEM,
-                        new HoverEvent.ItemStackContent(stack)
-                    ))
-                );
+                .styled(style -> style.withHoverEvent(new HoverEvent.ShowItem(stack)));
             return PlaceholderResult.value(mutableText);
         }
     );
