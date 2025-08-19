@@ -94,6 +94,7 @@ class BlueMapIntegration {
                         rPos.getY() - CONFIG.searchRadius,
                         rPos.getY() + CONFIG.searchRadius
                     );
+                    AREA_MARKER.setPosition(new Vector3d(rPos.getX(), rPos.getY(), rPos.getZ()));
                     MARKER_SET.put("dragon_egg", AREA_MARKER);
                     break;
             }
