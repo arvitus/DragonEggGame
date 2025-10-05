@@ -151,7 +151,7 @@ public class Utils {
      */
     public static @Nullable ItemEntity spawnDragonEggAtSpawn(@NotNull MinecraftServer server, int count) {
         ServerWorld overworld = server.getOverworld();
-        Vec3d spawnPos = overworld.getSpawnPos().toCenterPos();
+        Vec3d spawnPos = overworld.getSpawnPoint().getPos().toCenterPos();
         ItemEntity itemCopy = new ItemEntity(
             overworld,
             spawnPos.x,
@@ -170,8 +170,13 @@ public class Utils {
      * @return True if the entity is near the server spawn position, otherwise false
      */
     public static boolean isNearServerSpawn(Entity entity) {
-        ServerWorld overworld = Objects.requireNonNull(entity.getServer()).getOverworld();
-        return entity.getWorld() == overworld && entity.getPos().isInRange(overworld.getSpawnPos().toCenterPos(), 3);
+        ServerWorld overworld = Objects.requireNonNull(entity.getEntityWorld().getServer()).getOverworld();
+        return entity.getEntityWorld() == overworld && entity.getEntityPos().isInRange(
+            overworld
+                .getSpawnPoint()
+                .getPos()
+                .toCenterPos(), 3
+        );
     }
 
     public static boolean hasDragonEgg(Entity entity) {
@@ -186,7 +191,7 @@ public class Utils {
                         fallingBlock.getBlockPos(),
                         fallingBlock.getBlockState(),
                         fallingBlock.blockEntityData,
-                        fallingBlock.getWorld().getRegistryManager()
+                        fallingBlock.getEntityWorld().getRegistryManager()
                     )
                 )
             );

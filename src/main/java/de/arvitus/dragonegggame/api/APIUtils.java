@@ -3,7 +3,6 @@ package de.arvitus.dragonegggame.api;
 import com.mojang.authlib.GameProfile;
 import de.arvitus.dragonegggame.DragonEggGame;
 import de.arvitus.dragonegggame.files.Data;
-import net.minecraft.block.entity.SkullBlockEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -22,14 +21,18 @@ public class APIUtils {
         UserCache userCache;
         if ((player = server.getPlayerManager().getPlayer(data.playerUUID)) != null)
             bearer = player.getStyledDisplayName();
-        else if ((userCache = server.getUserCache()) != null && userCache.getByUuid(data.playerUUID).isPresent())
-            bearer = Text.of(userCache.getByUuid(data.playerUUID).get().getName());
+        else if ((userCache = (UserCache) server.getApiServices().nameToIdCache()) != null &&
+                 userCache.getByUuid(data.playerUUID).isPresent())
+            bearer = Text.of(userCache.getByUuid(data.playerUUID).get().name());
         else {
             try {
                 LOGGER.warn("Falling back to api call to fetch player data. This can impact server performance!");
-                GameProfile profile = SkullBlockEntity.fetchProfileByUuid(data.playerUUID).get().orElseThrow();
-                if ((userCache = server.getUserCache()) != null) userCache.add(profile);
-                bearer = Text.of(profile.getName());
+                GameProfile profile = server
+                    .getApiServices()
+                    .profileResolver()
+                    .getProfileById(data.playerUUID)
+                    .orElseThrow();
+                bearer = Text.of(profile.name());
             } catch (Exception e) {
                 bearer = Text.of("Unknown");
             }

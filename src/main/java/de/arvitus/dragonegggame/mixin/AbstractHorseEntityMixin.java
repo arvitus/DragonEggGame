@@ -26,11 +26,11 @@ public abstract class AbstractHorseEntityMixin extends AnimalEntity implements E
 
     @Override
     public Vec3d dragonEggGame$getPos() {
-        return this.getPos();
+        return this.getEntityPos();
     }
 
     @Override
     public World dragonEggGame$getWorld() {
-        return this.getWorld();
+        return this.getEntityWorld();
     }
 }

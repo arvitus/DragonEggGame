@@ -86,7 +86,7 @@ public class DragonEggAPI {
     }
 
     public static void updatePosition(Entity entity) {
-        updatePosition(getPositionType(entity), entity.getPos(), entity.getWorld(), entity);
+        updatePosition(getPositionType(entity), entity.getEntityPos(), entity.getEntityWorld(), entity);
     }
 
     private static synchronized void updatePosition(
@@ -143,16 +143,18 @@ public class DragonEggAPI {
 
     private static synchronized void trackEntity(Entity entity) {
         if (CONFIG.getVisibility(getPositionType(entity)) == Config.VisibilityType.EXACT) entity.setGlowing(true);
-        Events.SCHEDULED_ACTIONS.put(entity.getUuid(), new ScheduledEvent(
-            100,
-            server -> Optional.ofNullable(DragonEggAPI.getData()).ifPresent(data -> {
-                if (entity.isRemoved()) return;
-                entity.setGlowing(false);
-                if (!Utils.hasDragonEgg(entity)) return;
-                if (entity.getPos() != data.position) DragonEggAPI.updatePosition(entity);
-                else trackEntity(entity);
-            })
-        ));
+        Events.SCHEDULED_ACTIONS.put(
+            entity.getUuid(), new ScheduledEvent(
+                100,
+                server -> Optional.ofNullable(DragonEggAPI.getData()).ifPresent(data -> {
+                    if (entity.isRemoved()) return;
+                    entity.setGlowing(false);
+                    if (!Utils.hasDragonEgg(entity)) return;
+                    if (entity.getEntityPos() != data.position) DragonEggAPI.updatePosition(entity);
+                    else trackEntity(entity);
+                })
+            )
+        );
     }
 
     public static @Nullable Data getData() {
