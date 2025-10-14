@@ -45,6 +45,8 @@ public abstract class ItemEntityMixin extends Entity {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void beforeTick(CallbackInfo ci) {
+        if (this.getEntityWorld().isClient()) return;
+
         ItemStack stack = this.getStack();
         if (!this.isRemoved() && this.itemAge == 0 && Utils.isOrHasDragonEgg(stack)) {
             this.setGlowing(true);
