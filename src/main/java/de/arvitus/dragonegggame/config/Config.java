@@ -83,6 +83,18 @@ public class Config {
         return new Config();
     }
 
+    public boolean save() {
+        CommentedConfigurationNode node = LOADER.createNode();
+        try {
+            node.set(this);
+            LOADER.save(node);
+        } catch (Exception e) {
+            LOGGER.warn("Failed to save config to disk", e);
+            return false;
+        }
+        return true;
+    }
+
     public VisibilityType getVisibility(@Nullable PositionType type) {
         return visibility.getOrDefault(type, defaultVisibility.getOrDefault(type, VisibilityType.HIDDEN));
     }
