@@ -1,5 +1,6 @@
 plugins {
     id 'fabric-loom' version "${loom_version}"
+    id 'com.gradleup.shadow' version '9.2.2'
 }
 
 version = "${project.mod_version}-${project.minecraft_version}"
@@ -31,13 +32,28 @@ dependencies {
     compileOnly "de.bluecolored:bluemap-api:${project.bluemap_api_version}"
 
     // other dependencies
+    shadow("org.spongepowered:configurate-hocon:${project.configurate_version}")
 }
 
-processResources {
-    inputs.property "version", project.version
+tasks {
+    remapJar {
+        dependsOn(shadowJar)
+        inputFile = file(shadowJar.archiveFile)
+    }
 
-    filesMatching("fabric.mod.json") {
-        expand "version": project.mod_version
+    shadowJar {
+        relocationPrefix = "shadow"
+        enableAutoRelocation = true
+        configurations = List.of(project.configurations.named("shadow").get())
+        minimize()
+    }
+
+    processResources {
+        inputs.property "version", project.version
+
+        filesMatching("fabric.mod.json") {
+            expand "version": project.mod_version
+        }
     }
 }
 
