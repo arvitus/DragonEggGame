@@ -23,11 +23,14 @@ import net.minecraft.server.ServerTask;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 import static de.arvitus.dragonegggame.DragonEggGame.LOGGER;
 
 public class Events {
     public static final LinkedHashMap<UUID, ScheduledEvent> SCHEDULED_ACTIONS = new LinkedHashMap<>();
+    public static final LinkedHashMap<String, BiConsumer<Integer, MinecraftServer>> TICK_ACTIONS =
+        new LinkedHashMap<>();
 
     public static void register() {
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
@@ -39,7 +42,7 @@ public class Events {
             Optional.ofNullable(DragonEggAPI.getData()).ifPresent(Data::save)
         );
 
-        ServerTickEvents.END_SERVER_TICK.register(server ->
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
             new LinkedHashMap<>(SCHEDULED_ACTIONS).forEach((key, value) -> {
                 try {
                     if (value.tryRun(server)) SCHEDULED_ACTIONS.remove(key, value);
@@ -47,8 +50,16 @@ public class Events {
                     LOGGER.error("Error in scheduled callback", e);
                     SCHEDULED_ACTIONS.remove(key);
                 }
-            })
-        );
+            });
+            int ticks = server.getTicks();
+            TICK_ACTIONS.forEach((key, value) -> {
+                try {
+                    value.accept(ticks, server);
+                } catch (Exception e) {
+                    LOGGER.warn("Error in tick callback '{}'", key, e);
+                }
+            });
+        });
 
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, lifecycledResourceManager, b) -> Commands.reload());
 
