@@ -23,7 +23,6 @@ import static de.arvitus.dragonegggame.DragonEggGame.*;
 
 public class Data {
     public transient @Nullable World world;
-    public transient @NotNull Vec3d position = Vec3d.ZERO;
     @SerializedName("world")
     public @NotNull String worldId = "minecraft:overworld";
     @SerializedName("entity_uuid")
@@ -32,7 +31,7 @@ public class Data {
     public @Nullable UUID playerUUID;
     public @NotNull DragonEggAPI.PositionType type = PositionType.NONE;
     @SerializedName("type")
-    private transient @Nullable BlockPos randomizedPosition;
+    public @Nullable DragonEggAPI.PositionType type;
     @SerializedName("position")
     private @Nullable Vector3f _position;
     @SerializedName("randomized_position")
@@ -50,41 +49,38 @@ public class Data {
         } catch (JsonSyntaxException e) {
             LOGGER.warn("saved data is invalid: {}, using default values", e.getMessage());
         }
-
-        if (data._randomizedPosition != null) {
-            data.randomizedPosition = new BlockPos(
-                data._randomizedPosition.x,
-                data._randomizedPosition.y,
-                data._randomizedPosition.z
-            );
-        }
-        if (data._position != null) {
-            data.position = new Vec3d(data._position);
-        }
-
         return data;
     }
 
-    public BlockPos getRandomizedPosition() {
-        if (this.randomizedPosition == null) {
-            this.randomizedPosition = Utils.randomizePosition(this.getBlockPos(), CONFIG.searchRadius);
+    public @NotNull BlockPos getRandomizedPosition() {
+        if (this._randomizedPosition == null) {
+            BlockPos randPos = Utils.randomizePosition(this.getBlockPos(), CONFIG.searchRadius);
+            this._randomizedPosition = new Vector3i(randPos.getX(), randPos.getY(), randPos.getZ());
         }
-        return this.randomizedPosition;
+        return new BlockPos(
+            this._randomizedPosition.x,
+            this._randomizedPosition.y,
+            this._randomizedPosition.z
+        );
     }
 
-    public BlockPos getBlockPos() {
-        return BlockPos.ofFloored(this.position);
+    public @NotNull BlockPos getBlockPos() {
+        return BlockPos.ofFloored(getPosition());
+    }
+
+    public @NotNull Vec3d getPosition() {
+        return this._position == null ? Vec3d.ZERO : new Vec3d(this._position);
+    }
+
+    public void setPosition(@NotNull Vec3d position) {
+        this._position = position.toVector3f();
     }
 
     public void clearRandomizedPosition() {
-        this.randomizedPosition = null;
+        this._randomizedPosition = null;
     }
 
     public void save() {
-        BlockPos randPos = this.getRandomizedPosition();
-        this._randomizedPosition = new Vector3i(randPos.getX(), randPos.getY(), randPos.getZ());
-        this._position = this.position.toVector3f();
-
         File dataFile = CONFIG_DIR.resolve("data.json").toFile();
         try (Writer writer = new FileWriter(dataFile)) {
             new GsonBuilder().setPrettyPrinting().create().toJson(this, writer);

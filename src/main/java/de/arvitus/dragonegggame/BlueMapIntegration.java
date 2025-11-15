@@ -81,9 +81,9 @@ class BlueMapIntegration {
                     return;
                 case EXACT:
                     POINT_MARKER.setPosition(
-                        data.position.getX(),
-                        data.position.getY(),
-                        data.position.getZ()
+                        data.getPosition().getX(),
+                        data.getPosition().getY(),
+                        data.getPosition().getZ()
                     );
                     MARKER_SET.put("dragon_egg", POINT_MARKER);
                     break;

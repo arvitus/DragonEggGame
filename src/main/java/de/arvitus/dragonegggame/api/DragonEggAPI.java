@@ -135,7 +135,7 @@ public class DragonEggAPI {
         data.type = type;
         data.world = world;
         data.worldId = world.getRegistryKey().getValue().toString();
-        data.position = pos;
+        data.setPosition(pos);
 
         data.save();
         dispatchUpdate();
@@ -150,7 +150,7 @@ public class DragonEggAPI {
                     if (entity.isRemoved()) return;
                     entity.setGlowing(false);
                     if (!Utils.hasDragonEgg(entity)) return;
-                    if (entity.getEntityPos() != data.position) DragonEggAPI.updatePosition(entity);
+                    if (entity.getEntityPos() != data.getPosition()) DragonEggAPI.updatePosition(entity);
                     else trackEntity(entity);
                 })
             )
