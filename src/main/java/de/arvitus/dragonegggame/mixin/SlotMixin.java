@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Inspired from
+ * Inspired by
  * <a href="https://github.com/QuiltServerTools/Ledger/blob/master/src/main/java/com/github/quiltservertools/ledger/mixin/SlotMixin.java">ledger</a>
  */
 @Mixin(Slot.class)
@@ -36,24 +36,21 @@ public abstract class SlotMixin {
 
     @Inject(method = "setStack(Lnet/minecraft/item/ItemStack;)V", at = @At("HEAD"))
     private void onStackChange(ItemStack stack, CallbackInfo ci) {
-        if (Utils.isOrHasDragonEgg(stack)) {
-            if (this.inventory instanceof PlayerInventory playerInventory) {
-                DragonEggAPI.updatePosition(playerInventory.player);
-                return;
-            }
+        if (!Utils.isOrHasDragonEgg(stack)) return;
 
-            BlockInventory inventory = this.getBlockInventory();
-            if (inventory == null) return;
-            World world = inventory.dragonEggGame$getWorld();
-            if (world == null) return;
-
-            BlockPos pos = inventory.dragonEggGame$getPos();
-            if (this.inventory instanceof BlockEntity)
+        switch (this.inventory) {
+            case PlayerInventory playerInventory -> DragonEggAPI.updatePosition(playerInventory.player);
+            case BlockEntity blockEntity -> DragonEggAPI.updatePosition(blockEntity);
+            case Entity entity -> DragonEggAPI.updatePosition(entity);
+            default -> {
+                BlockInventory blockInventory = this.getBlockInventory();
+                if (blockInventory == null) return;
+                BlockPos pos = blockInventory.dragonEggGame$getPos();
+                World world = blockInventory.dragonEggGame$getWorld();
+                if (pos == null || world == null) return;
                 DragonEggAPI.updatePosition(DragonEggAPI.PositionType.INVENTORY, pos, world);
-            else if (this.inventory instanceof Entity entity)
-                DragonEggAPI.updatePosition(entity);
+            }
         }
-
     }
 
     @Unique
