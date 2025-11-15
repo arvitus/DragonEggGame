@@ -20,8 +20,7 @@ public class Config {
         PositionType.FALLING_BLOCK, VisibilityType.EXACT,
         PositionType.INVENTORY, VisibilityType.EXACT,
         PositionType.ENTITY, VisibilityType.EXACT,
-        PositionType.PLAYER, VisibilityType.HIDDEN,
-        PositionType.NONE, VisibilityType.HIDDEN
+        PositionType.PLAYER, VisibilityType.HIDDEN
     );
     private static final Path PATH = CONFIG_DIR.resolve("config.conf");
     private static final HoconConfigurationLoader LOADER = HoconConfigurationLoader.builder()

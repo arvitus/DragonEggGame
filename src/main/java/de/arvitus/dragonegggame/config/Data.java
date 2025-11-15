@@ -6,7 +6,6 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 import de.arvitus.dragonegggame.api.DragonEggAPI;
-import de.arvitus.dragonegggame.api.DragonEggAPI.PositionType;
 import de.arvitus.dragonegggame.utils.Utils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -29,7 +28,6 @@ public class Data {
     public @Nullable UUID entityUUID;
     @SerializedName("player_uuid")
     public @Nullable UUID playerUUID;
-    public @NotNull DragonEggAPI.PositionType type = PositionType.NONE;
     @SerializedName("type")
     public @Nullable DragonEggAPI.PositionType type;
     @SerializedName("position")

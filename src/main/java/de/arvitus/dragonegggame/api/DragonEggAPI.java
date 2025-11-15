@@ -78,7 +78,9 @@ public class DragonEggAPI {
     }
 
     public static void clearPosition() {
-        updatePosition(PositionType.NONE, null, null);
+        data = new Data();
+        data.save();
+        dispatchUpdate();
     }
 
     public static void updatePosition(@NotNull Entity entity) {
@@ -163,12 +165,11 @@ public class DragonEggAPI {
         return data;
     }
 
-    public static PositionType getPositionType(Entity entity) {
+    public static PositionType getPositionType(@NotNull Entity entity) {
         return switch (entity) {
             case ItemEntity ignored -> PositionType.ITEM;
             case FallingBlockEntity ignored -> PositionType.FALLING_BLOCK;
             case PlayerEntity ignored -> PositionType.PLAYER;
-            case null -> PositionType.NONE;
             default -> PositionType.ENTITY;
         };
     }
@@ -186,8 +187,6 @@ public class DragonEggAPI {
         ENTITY,
         /** A player is carrying the Dragon Egg */
         PLAYER,
-        /** The Dragon Egg does not exist */
-        NONE
     }
 
     private record DeferredUpdate(PositionType type, Vec3d pos, World world, Entity entity) {}
