@@ -6,7 +6,6 @@
   "mixins": [
     "AbstractHorseEntityMixin",
     "DoubleInventoryMixin",
-    "DragonEggBlockMixin",
     "EntityMixin",
     "HopperBlockEntityMixin",
     "HorseScreenHandlerMixin",
