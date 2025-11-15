@@ -47,7 +47,7 @@ public class Events {
                 try {
                     if (value.tryRun(server)) SCHEDULED_ACTIONS.remove(key, value);
                 } catch (Exception e) {
-                    LOGGER.error("Error in scheduled callback", e);
+                    LOGGER.warn("Error in scheduled callback", e);
                     SCHEDULED_ACTIONS.remove(key);
                 }
             });
