@@ -1,7 +1,7 @@
 package de.arvitus.dragonegggame;
 
 import de.arvitus.dragonegggame.api.DragonEggAPI;
-import de.arvitus.dragonegggame.files.Data;
+import de.arvitus.dragonegggame.config.Data;
 import de.arvitus.dragonegggame.utils.ScheduledEvent;
 import de.arvitus.dragonegggame.utils.Utils;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;

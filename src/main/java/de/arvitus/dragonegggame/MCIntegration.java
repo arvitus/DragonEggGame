@@ -1,7 +1,7 @@
 package de.arvitus.dragonegggame;
 
 import de.arvitus.dragonegggame.api.DragonEggAPI;
-import de.arvitus.dragonegggame.files.Data;
+import de.arvitus.dragonegggame.config.Data;
 import eu.pb4.placeholders.api.PlaceholderContext;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.registry.Registries;

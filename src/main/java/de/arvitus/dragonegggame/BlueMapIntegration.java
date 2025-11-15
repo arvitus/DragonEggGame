@@ -4,7 +4,7 @@ import com.flowpowered.math.vector.Vector3d;
 import com.technicjelle.BMUtils.BMCopy;
 import de.arvitus.dragonegggame.api.DragonEggAPI;
 import de.arvitus.dragonegggame.config.Config;
-import de.arvitus.dragonegggame.files.Data;
+import de.arvitus.dragonegggame.config.Data;
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.markers.ExtrudeMarker;
 import de.bluecolored.bluemap.api.markers.MarkerSet;

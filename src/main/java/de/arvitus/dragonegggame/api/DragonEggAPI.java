@@ -3,7 +3,7 @@ package de.arvitus.dragonegggame.api;
 import de.arvitus.dragonegggame.DragonEggGame;
 import de.arvitus.dragonegggame.Events;
 import de.arvitus.dragonegggame.config.Config;
-import de.arvitus.dragonegggame.files.Data;
+import de.arvitus.dragonegggame.config.Data;
 import de.arvitus.dragonegggame.utils.ScheduledEvent;
 import de.arvitus.dragonegggame.utils.Utils;
 import net.minecraft.entity.Entity;

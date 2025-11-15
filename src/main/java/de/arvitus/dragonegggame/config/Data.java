@@ -1,4 +1,4 @@
-package de.arvitus.dragonegggame.files;
+package de.arvitus.dragonegggame.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

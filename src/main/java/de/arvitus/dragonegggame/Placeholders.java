@@ -3,7 +3,7 @@ package de.arvitus.dragonegggame;
 import de.arvitus.dragonegggame.api.APIUtils;
 import de.arvitus.dragonegggame.api.DragonEggAPI;
 import de.arvitus.dragonegggame.config.Config;
-import de.arvitus.dragonegggame.files.Data;
+import de.arvitus.dragonegggame.config.Data;
 import eu.pb4.placeholders.api.PlaceholderHandler;
 import eu.pb4.placeholders.api.PlaceholderResult;
 import me.lucko.fabric.api.permissions.v0.Permissions;

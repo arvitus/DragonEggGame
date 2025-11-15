@@ -2,7 +2,7 @@ package de.arvitus.dragonegggame.api;
 
 import com.mojang.authlib.GameProfile;
 import de.arvitus.dragonegggame.DragonEggGame;
-import de.arvitus.dragonegggame.files.Data;
+import de.arvitus.dragonegggame.config.Data;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
