@@ -15,7 +15,7 @@ public class ScheduledEvent {
 
     public boolean tryRun(MinecraftServer server) {
         this.ticks--;
-        if (ticks == 0) {
+        if (ticks <= 0) {
             action.accept(server);
             return true;
         }
