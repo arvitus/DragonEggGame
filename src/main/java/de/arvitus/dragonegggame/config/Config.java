@@ -2,6 +2,7 @@ package de.arvitus.dragonegggame.config;
 
 import de.arvitus.dragonegggame.api.DragonEggAPI.PositionType;
 import eu.pb4.placeholders.api.parsers.NodeParser;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -82,8 +83,8 @@ public class Config {
         return new Config();
     }
 
-    public VisibilityType getVisibility(PositionType type) {
-        return visibility.getOrDefault(type, defaultVisibility.get(type));
+    public VisibilityType getVisibility(@Nullable PositionType type) {
+        return visibility.getOrDefault(type, defaultVisibility.getOrDefault(type, VisibilityType.HIDDEN));
     }
 
     public enum VisibilityType {
