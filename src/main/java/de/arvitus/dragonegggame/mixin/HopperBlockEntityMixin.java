@@ -29,11 +29,7 @@ public abstract class HopperBlockEntityMixin {
         CallbackInfoReturnable<ItemStack> cir
     ) {
         if (Utils.isOrHasDragonEgg(to.getStack(slot)) && to instanceof BlockEntity blockEntity) {
-            DragonEggAPI.updatePosition(
-                DragonEggAPI.PositionType.INVENTORY,
-                blockEntity.getPos(),
-                blockEntity.getWorld()
-            );
+            DragonEggAPI.updatePosition(blockEntity);
         }
     }
 }

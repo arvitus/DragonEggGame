@@ -120,11 +120,7 @@ public class Events {
                         ItemStack stack = containerBlockEntity.getStack(i);
                         if (stack.isEmpty()) continue;
                         if (Utils.isOrHasDragonEgg(stack)) {
-                            DragonEggAPI.updatePosition(
-                                DragonEggAPI.PositionType.INVENTORY,
-                                containerBlockEntity.getPos(),
-                                containerBlockEntity.getWorld()
-                            );
+                            DragonEggAPI.updatePosition(containerBlockEntity);
                             break;
                         }
                     }

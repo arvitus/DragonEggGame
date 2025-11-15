@@ -43,6 +43,6 @@ public abstract class ServerWorldMixin extends World {
     @Inject(method = "onBlockStateChanged", at = @At("HEAD"))
     public void onBlockStateChanged(BlockPos pos, BlockState oldBlock, BlockState newBlock, CallbackInfo ci) {
         // Block entities are not yet loaded at this point
-        if (newBlock.isOf(Blocks.DRAGON_EGG)) DragonEggAPI.updatePosition(DragonEggAPI.PositionType.BLOCK, pos, this);
+        if (newBlock.isOf(Blocks.DRAGON_EGG)) DragonEggAPI.updatePosition(pos, this);
     }
 }

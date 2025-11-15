@@ -6,6 +6,7 @@ import de.arvitus.dragonegggame.config.Config;
 import de.arvitus.dragonegggame.config.Data;
 import de.arvitus.dragonegggame.utils.ScheduledEvent;
 import de.arvitus.dragonegggame.utils.Utils;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.ItemEntity;
@@ -80,19 +81,26 @@ public class DragonEggAPI {
         updatePosition(PositionType.NONE, null, null);
     }
 
-    public static void updatePosition(@NotNull DragonEggAPI.PositionType type, @Nullable BlockPos pos, World world) {
-        Vec3d position = pos == null ? null : pos.toCenterPos();
-        updatePosition(type, position, world, null);
-    }
-
-    public static void updatePosition(Entity entity) {
+    public static void updatePosition(@NotNull Entity entity) {
         updatePosition(getPositionType(entity), entity.getEntityPos(), entity.getEntityWorld(), entity);
     }
 
+    public static void updatePosition(@NotNull BlockEntity blockEntity) {
+        updatePosition(PositionType.INVENTORY, blockEntity.getPos(), Objects.requireNonNull(blockEntity.getWorld()));
+    }
+
+    public static void updatePosition(@NotNull BlockPos pos, @NotNull World world) {
+        updatePosition(PositionType.BLOCK, pos, world);
+    }
+
+    public static void updatePosition(@NotNull PositionType type, @NotNull BlockPos pos, @NotNull World world) {
+        updatePosition(type, pos.toCenterPos(), world, null);
+    }
+
     private static synchronized void updatePosition(
-        @NotNull DragonEggAPI.PositionType type,
-        Vec3d pos,
-        World world,
+        @NotNull PositionType type,
+        @NotNull Vec3d pos,
+        @NotNull World world,
         @Nullable Entity entity
     ) {
         if (data == null) {
@@ -104,17 +112,11 @@ public class DragonEggAPI {
         LOGGER.debug(
             "Updating Dragon Egg position to type: {}, pos: {}, world: {}, entity: {}",
             type,
-            pos != null ? BlockPos.ofFloored(pos).toShortString() : null,
-            world != null ? world.getRegistryKey().getValue() : null,
+            BlockPos.ofFloored(pos).toShortString(),
+            world.getRegistryKey().getValue(),
             entity
         );
 
-        if (type == PositionType.NONE || pos == null || world == null) {
-            data.type = PositionType.NONE;
-            data.save();
-            dispatchUpdate();
-            return;
-        }
 
         if (entity != null) {
             data.entityUUID = entity.getUuid();
