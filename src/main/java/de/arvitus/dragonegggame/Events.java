@@ -50,6 +50,8 @@ public class Events {
             })
         );
 
+        ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, lifecycledResourceManager, b) -> Commands.reload());
+
         PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, entity) -> {
             if (player.isCreative() && state.isOf(Blocks.DRAGON_EGG)) DragonEggAPI.clearPosition();
         });

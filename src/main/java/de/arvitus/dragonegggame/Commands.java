@@ -20,6 +20,7 @@ import net.minecraft.text.Text;
 import java.net.URI;
 
 import static de.arvitus.dragonegggame.DragonEggGame.CONFIG;
+import static de.arvitus.dragonegggame.DragonEggGame.LOGGER;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class Commands {
@@ -82,17 +83,26 @@ public class Commands {
     }
 
     private static int reload(CommandContext<ServerCommandSource> context) {
-        Config oldConfig = CONFIG;
-        CONFIG = Config.loadOrCreate();
-        if (CONFIG == oldConfig) {
+        if (!reload()) {
             context.getSource().sendError(Text.of(
                 "Failed to load config, using previous value instead. See console for more information."));
             return -1;
         }
-        DragonEggAPI.init();
         context.getSource()
             .sendFeedback(() -> Text.of("Reloaded DragonEggGame config and data"), false);
         return 1;
+    }
+
+    public static boolean reload() {
+        Config oldConfig = CONFIG;
+        CONFIG = Config.loadAndUpdateOrCreate();
+        if (CONFIG == oldConfig) {
+            LOGGER.error("Failed to load config, using previous value instead.");
+            return false;
+        }
+        DragonEggAPI.init();
+        LOGGER.info("Reloaded DragonEggGame config and data");
+        return true;
     }
 
     private static int dragon_egg$bearer(CommandContext<ServerCommandSource> context) {
