@@ -22,6 +22,12 @@ public class DragonEggGame implements ModInitializer {
     @Nullable
     public static MinecraftServer server;
 
+    public static void devLogger(String message, Object... args) {
+        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            LOGGER.info("[DEV] " + message, args);
+        }
+    }
+
     @Override
     public void onInitialize() {
         FabricLoader.getInstance().getModContainer(MOD_ID).ifPresent(modContainer -> {

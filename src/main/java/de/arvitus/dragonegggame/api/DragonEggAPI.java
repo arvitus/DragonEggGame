@@ -111,7 +111,7 @@ public class DragonEggAPI {
             return;
         }
 
-        LOGGER.debug(
+        devLogger(
             "Updating Dragon Egg position to type: {}, pos: {}, world: {}, entity: {}",
             type,
             BlockPos.ofFloored(pos).toShortString(),
