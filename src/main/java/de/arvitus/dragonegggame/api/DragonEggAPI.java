@@ -111,6 +111,9 @@ public class DragonEggAPI {
             return;
         }
 
+        if (entity != null) trackEntity(entity);
+        if (type == data.type && pos.distanceTo(data.getPosition()) < 0.00001) return;
+
         devLogger(
             "Updating Dragon Egg position to type: {}, pos: {}, world: {}, entity: {}",
             type,
@@ -154,8 +157,7 @@ public class DragonEggAPI {
                     if (entity.isRemoved()) return;
                     entity.setGlowing(false);
                     if (!Utils.hasDragonEgg(entity)) return;
-                    if (entity.getEntityPos() != data.getPosition()) DragonEggAPI.updatePosition(entity);
-                    else trackEntity(entity);
+                    DragonEggAPI.updatePosition(entity);
                 })
             )
         );
