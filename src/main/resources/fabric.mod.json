@@ -23,8 +23,8 @@
     "dragonegggame.mixins.json"
   ],
   "depends": {
-    "minecraft": "~1.21",
-    "fabricloader": ">=0.15.0",
+    "minecraft": ">=${minecraft_version}",
+    "fabricloader": ">=${loader_version}",
     "fabric": "*",
     "java": ">=21"
   },
