@@ -11,6 +11,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static de.arvitus.dragonegggame.DragonEggGame.*;
 
@@ -229,27 +230,43 @@ public class Config {
     )
     private Map<PositionType, VisibilityType> visibility = defaultVisibility;
 
-    public static Config loadOrCreate() {
+    public static Config loadAndUpdateOrCreate() {
+        Config config = new Config();
         if (!PATH.toFile().isFile()) {
-            CommentedConfigurationNode node = LOADER.createNode();
-            try {
-                node.set(new Config());
-                LOADER.save(node);
-            } catch (Exception e) {
-                LOGGER.warn("Failed to save default config to disk", e);
-            }
-        } else {
-            try {
-                return LOADER.load().get(Config.class);
-            } catch (Exception e) {
-                if (CONFIG != null) {
-                    LOGGER.warn("Failed to load config, using previous value instead", e);
-                    return CONFIG;
-                }
-                LOGGER.warn("Failed to load config, using default config instead", e);
-            }
+            config.save();
+            return config;
         }
-        return new Config();
+
+        try {
+            CommentedConfigurationNode node = LOADER.load();
+
+            boolean update = false;
+            if (!node.hasChild("actions")) {
+                // visibility type NONE was removed
+                node.node("visibility").removeChild("NONE");
+                update = true;
+            }
+
+            config = node.get(Config.class);
+
+            if (update) {
+                LOGGER.info("Detected old config file format, updating...");
+                try {
+                    Objects.requireNonNull(config).save();
+                    LOGGER.info("Config file was updated to current format");
+                } catch (Exception e) {
+                    LOGGER.warn("Failed to update config file to new format", e);
+                }
+            }
+        } catch (Exception e) {
+            if (CONFIG != null) {
+                LOGGER.warn("Failed to load config, using previous value instead", e);
+                config = CONFIG;
+            }
+            LOGGER.warn("Failed to load config, using default config instead", e);
+        }
+
+        return config;
     }
 
     public boolean save() {

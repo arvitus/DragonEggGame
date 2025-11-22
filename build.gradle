@@ -32,7 +32,6 @@ dependencies {
     compileOnly "de.bluecolored:bluemap-api:${project.bluemap_api_version}"
 
     // other dependencies
-    shadow("org.spongepowered:configurate-hocon:${project.configurate_version}")
     shadow implementation("org.spongepowered:configurate-hocon:${project.configurate_version}")
     shadow implementation("net.objecthunter:exp4j:${project.exp4j_version}")
 }

@@ -42,8 +42,8 @@ public class DragonEggGame implements ModInitializer {
         });
 
         Placeholders.register();
-        CONFIG = Config.loadOrCreate();
         LootConditions.register();
+        CONFIG = Config.loadAndUpdateOrCreate();
         Commands.register();
         Events.register();
 
