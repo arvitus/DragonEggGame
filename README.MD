@@ -13,7 +13,7 @@ Dragon Egg.
 
 ---
 
-## Trivia
+# Trivia
 
 On our SMP Server, we never had any use for the Dragon Egg. After we defeat the Ender Dragon, someone would usually just
 take the Dragon Egg, put it in their Ender Chest and leave it there until the end of time. This way the Dragon Egg,
@@ -22,7 +22,7 @@ similar on another SMP, we decided to make a minigame out of it. This way the Dr
 also encourage some player interaction. This mod helped us enforce the rules of the game and made it easier to play.
 **Now we want to share it with you!**
 
-## Rules
+# Rules
 
 These are the rules we came up with for our server. Of course, you can change them however you like!
 
@@ -33,7 +33,7 @@ These are the rules we came up with for our server. Of course, you can change th
   blocks or any massive technical knowledge.
 - *It's supposed to be fun, so don't take it too seriously!*
 
-## Features
+# Features
 
 - Automatic and recursive tracking of the Dragon Egg (even in shulker boxes inside chests)
 - Dragon Egg cannot be destroyed
@@ -53,7 +53,7 @@ These are the rules we came up with for our server. Of course, you can change th
 
 <h3 id="commands"></h3>
 
-## Commands
+# Commands
 
 | Command              | Description                                          | Permission or OP Level      |
 |----------------------|------------------------------------------------------|-----------------------------|
@@ -64,7 +64,7 @@ These are the rules we came up with for our server. Of course, you can change th
 
 <h3 id="placeholders"></h3>
 
-## Placeholders
+# Placeholders
 
 Placeholder format: `%placeholder%`
 
@@ -132,6 +132,6 @@ visibility {
 }
 ```
 
-## Tips
+# Tips
 
 - If the mod says that the egg is in a players inventory, but it is not, it is most likely in the player's ender chest.
