@@ -43,7 +43,7 @@ tasks {
     }
 
     shadowJar {
-        relocationPrefix = "shadow"
+        relocationPrefix = "${project.group}.${project.mod_id}.shadow"
         enableAutoRelocation = true
         configurations = [project.configurations.shadow]
         minimize()
