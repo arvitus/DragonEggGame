@@ -39,7 +39,7 @@ dependencies {
 tasks {
     remapJar {
         dependsOn(shadowJar)
-        inputFile = file(shadowJar.archiveFile)
+        inputFile.set(shadowJar.archiveFile)
     }
 
     shadowJar {
