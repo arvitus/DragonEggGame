@@ -16,6 +16,7 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import java.io.*;
+import java.util.Objects;
 import java.util.UUID;
 
 import static de.arvitus.dragonegggame.DragonEggGame.*;
@@ -28,7 +29,9 @@ public class Data {
     public @Nullable UUID entityUUID;
     @SerializedName("player_uuid")
     public @Nullable UUID playerUUID;
-    @SerializedName("type")
+    @SerializedName("last_change")
+    public long lastChange = 0;
+    public Durations durations = new Durations();
     public @Nullable DragonEggAPI.PositionType type;
     @SerializedName("position")
     private @Nullable Vector3f _position;
@@ -78,12 +81,86 @@ public class Data {
         this._randomizedPosition = null;
     }
 
+    public long getBearerTime(long currentTime) {
+        return durations.block + durations.player + durations.item + durations.entity + durations.inventory +
+               durations.fallingBlock + getContinuousTime(currentTime);
+    }
+
+    public long getContinuousTime(long currentTime) {
+        return currentTime - this.lastChange;
+    }
+
+    public long getDuration(DragonEggAPI.PositionType type) {
+        return switch (type) {
+            case BLOCK -> durations.block;
+            case PLAYER -> durations.player;
+            case ITEM -> durations.item;
+            case ENTITY -> durations.entity;
+            case INVENTORY -> durations.inventory;
+            case FALLING_BLOCK -> durations.fallingBlock;
+            case null -> 0;
+        };
+    }
+
     public void save() {
         File dataFile = CONFIG_DIR.resolve("data.json").toFile();
         try (Writer writer = new FileWriter(dataFile)) {
             new GsonBuilder().setPrettyPrinting().create().toJson(this, writer);
         } catch (JsonIOException | IOException e) {
             LOGGER.warn("could not save data: {}", e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Data data)) return false;
+        return Objects.equals(worldId, data.worldId) &&
+               Objects.equals(entityUUID, data.entityUUID) &&
+               Objects.equals(playerUUID, data.playerUUID) &&
+               Objects.equals(durations, data.durations) &&
+               lastChange == data.lastChange &&
+               type == data.type &&
+               Objects.equals(_position, data._position) &&
+               Objects.equals(_randomizedPosition, data._randomizedPosition);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+            worldId,
+            entityUUID,
+            playerUUID,
+            durations,
+            lastChange,
+            type,
+            _position,
+            _randomizedPosition
+        );
+    }
+
+    public static class Durations {
+        public long block = 0;
+        public long player = 0;
+        public long item = 0;
+        public long entity = 0;
+        public long inventory = 0;
+        @SerializedName("falling_block")
+        public long fallingBlock = 0;
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Durations that)) return false;
+            return block == that.block &&
+                   player == that.player &&
+                   item == that.item &&
+                   entity == that.entity &&
+                   inventory == that.inventory &&
+                   fallingBlock == that.fallingBlock;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(block, player, item, entity, inventory, fallingBlock);
         }
     }
 }

@@ -1,6 +1,7 @@
 package de.arvitus.dragonegggame;
 
 import de.arvitus.dragonegggame.config.Config;
+import de.arvitus.dragonegggame.features.Actions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.ModMetadata;
@@ -42,8 +43,11 @@ public class DragonEggGame implements ModInitializer {
 
         Placeholders.register();
         CONFIG = Config.loadOrCreate();
+        LootConditions.register();
         Commands.register();
         Events.register();
+
+        Actions.init();
 
         MCIntegration.init();
         if (BLUEMAP_INSTALLED) {
@@ -51,6 +55,4 @@ public class DragonEggGame implements ModInitializer {
             BlueMapIntegration.init();
         }
     }
-
-
 }

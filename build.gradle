@@ -33,6 +33,8 @@ dependencies {
 
     // other dependencies
     shadow("org.spongepowered:configurate-hocon:${project.configurate_version}")
+    shadow implementation("org.spongepowered:configurate-hocon:${project.configurate_version}")
+    shadow implementation("net.objecthunter:exp4j:${project.exp4j_version}")
 }
 
 tasks {
@@ -44,7 +46,7 @@ tasks {
     shadowJar {
         relocationPrefix = "shadow"
         enableAutoRelocation = true
-        configurations = List.of(project.configurations.named("shadow").get())
+        configurations = [project.configurations.shadow]
         minimize()
     }
 

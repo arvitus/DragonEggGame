@@ -120,6 +120,20 @@ public class DragonEggAPI {
             entity
         );
 
+        if (type != data.type || (entity != null && !Objects.equals(data.entityUUID, entity.getUuid()))) {
+            long currentTime = Objects.requireNonNull(world.getServer()).getOverworld().getTime();
+            long deltaTime = currentTime - data.lastChange;
+            switch (data.type) {
+                case BLOCK -> data.durations.block += deltaTime;
+                case PLAYER -> data.durations.player += deltaTime;
+                case ITEM -> data.durations.item += deltaTime;
+                case ENTITY -> data.durations.entity += deltaTime;
+                case INVENTORY -> data.durations.inventory += deltaTime;
+                case FALLING_BLOCK -> data.durations.fallingBlock += deltaTime;
+                case null -> {}
+            }
+            data.lastChange = currentTime;
+        }
 
         data.entityUUID = entity != null ? entity.getUuid() : null;
         if (entity instanceof ServerPlayerEntity player && !Objects.equals(data.playerUUID, player.getUuid())) {

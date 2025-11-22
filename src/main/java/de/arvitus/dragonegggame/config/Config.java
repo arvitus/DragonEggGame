@@ -9,6 +9,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 
 import static de.arvitus.dragonegggame.DragonEggGame.*;
@@ -28,7 +29,11 @@ public class Config {
         .path(PATH)
         .prettyPrinting(true)
         .defaultOptions(opts -> opts.serializers(build ->
-            build.register(MessageString.class, new MessageString.Serializer(Messages.PARSER))
+            build
+                .register(MessageString.class, new MessageString.Serializer(Messages.PARSER))
+                .register(Action.class, Action.Serializer.INSTANCE)
+                .register(CommandTemplate.class, CommandTemplate.Serializer.INSTANCE)
+                .register(Condition.class, Condition.Serializer.INSTANCE)
         ))
         .build();
 
@@ -46,6 +51,170 @@ public class Config {
     public int markerColor = 0x2b0054; // Purple
     @Comment("Messages used throughout the mod")
     public Messages messages = new Messages();
+    @Comment("The distance in blocks around the Dragon Egg where players count as 'nearby'")
+    public int nearbyRange = 64;
+    @Comment("""
+        Actions that are executed on certain triggers.
+        You can specify different actions and also specify a condition that must be met for the action to run.
+        
+        Available triggers:
+            - 'deg:block' - When the egg is placed as a block.
+            - 'deg:item' - When the egg becomes an item (e.g. is dropped).
+            - 'deg:inventory' - When the egg is placed in a block inventory (e.g. chest).
+            - 'deg:entity' - When the egg is placed in an entity inventory (e.g. item frame, chest boat)
+            - 'deg:player' - When the egg enters a players inventory.
+            - 'deg:falling_block' - When the egg becomes a falling block entity.
+            - 'deg:second' - Every second.
+        NOTE: All entities (items, falling blocks, players, etc.) will trigger multiple times if they move while holding the egg.
+        
+        The following placeholders are available in commands and use the format {{<placeholder>}}:
+            - 'bearer' - The name of the bearer.
+            - 'bearer_id' - The uuid of the bearer.
+            - 'nearby' - Shortcut for '@a[predicate=deg:is_nearby]' (see below).
+        
+        The Mod also provides two predicates that can be used in commands (also in-game):
+            - 'deg:is_bearer' - Matches the current bearer of the egg.
+            - 'deg:is_nearby' - Matches players within the reward range of the egg.
+        
+        Additionally, you can use ${<expression>} to calculate a mathematical expression.
+        For information on available functions and operators, see: https://www.objecthunter.net/exp4j/
+        IMPORTANT: Make sure the result is a format that is compatible with the format expected by the command.
+                   Most commands expect integer values, so make sure the calculation results in an integer.
+                   The functions 'round(a, b)', 'floor(a)', and 'ceil(a)' can help with that.
+        Available variables:
+            - (int) 'bearerTime' - The time in seconds since the last bearer change.
+            - (int) 'blockTime' - The time in seconds since the egg was last placed.
+            - (int) 'totalBlockTime' - The total time in seconds the egg has been placed, since the last bearer change.
+            - (int) 'playerTime' - The time in seconds since the egg has last entered the bearers inventory.
+            - (int) 'totalPlayerTime' - The total time in seconds the egg has been in the bearers inventory, since the last bearer change.
+            - (int) 'itemTime' - The time in seconds since the egg became an item entity.
+            - (int) 'totalItemTime' - The total time in seconds the egg has been an item entity, since the last bearer change.
+            - (int) 'entityTime' - The time in seconds since the egg was last placed in an entity inventory (not player).
+            - (int) 'totalEntityTime' - The total time in seconds the egg has been in an entity inventory (not player), since the last bearer change.
+            - (int) 'invTime' - The time in seconds since the egg was last placed in a block inventory.
+            - (int) 'totalInvTime' - The total time in seconds the egg has been in a block inventory, since the last bearer change.
+            - (int) 'fallingTime' - The time in seconds since the egg became a falling block entity.
+            - (int) 'totalFallingTime' - The total time in seconds the egg has been a falling block entity, since the last bearer change.
+            - (double) 'x' - The X coordinate of the egg, at the center of the block.
+            - (double) 'y' - The Y coordinate of the egg, at the center of the block.
+            - (double) 'z' - The Z coordinate of the egg, at the center of the block.
+            - (int) 'randX' - The randomized X block coordinate of the egg.
+            - (int) 'randY' - The randomized Y block coordinate of the egg.
+            - (int) 'randZ' - The randomized Z block coordinate of the egg.
+        Additional functions:
+            - rnd(a) - returns a pseudo random number between 0 and a (0 <= rnd(a) < a)
+            - min(a, b) - returns the smaller of a and b
+            - max(a, b) - returns the larger of a and b
+            - round(a, b) - rounds a to b decimal places
+        Additional operators:
+            - '==' - equals (returns 1 if true and 0 otherwise)
+            - '!=' - not equals (returns 1 if true and 0 otherwise)
+            - '<' - less than (returns 1 if true and 0 otherwise)
+            - '>' - greater than (returns 1 if true and 0 otherwise)
+            - '<=' - less than or equal (returns 1 if true and 0 otherwise)
+            - '>=' - greater than or equal (returns 1 if true and 0 otherwise)
+            - '&&' - logical and (returns 0 if at least one value is 0 and 1 otherwise)
+            - '||' - logical or (returns 0 if both values are 0 and 1 otherwise)
+        
+        Format:
+        [ // a list of Actions
+            <Action1>, // see below for Action object format
+            <Action2>,
+            ...
+        ]
+        
+        Action Object:
+        {
+            "trigger": "<trigger>", // the trigger that activates this Action (required at top level, otherwise ignored)
+            "condition": "<expression>", // the condition that must be met (<expression> != 0) for the Action to run (optional)
+            "actions": [ // a list of Actions to execute (optional)
+                "<command>", // shorthand for an Action with only a command,
+                <Action2>, // an Action object
+                ...
+            ],
+            "command": "<command>" // a minecraft command to execute (optional)
+            // you can use any valid Minecraft command here, including commands added by other mods
+        }
+        
+        Example:
+        [
+            {
+                "trigger": "deg:block",
+                "actions": [
+                    "tellraw @a {\"text\":\"The Dragon Egg has been deployed. Go find it!\", \"color\":\"yellow\"}",
+                    {
+                        "condition": "totalBlockTime == 0", // <-- only run once when the egg is placed the first time
+                        "command": "effect give {{bearer_id}} minecraft:strength 300 1"
+                    } //                              ^-- will insert the uuid of the bearer
+                ]
+            },
+            {
+                "trigger": "deg:second",
+                "condition": "blockTime == 0 && bearerTime % 30 == 0": [ // <-- runs every 30 seconds if the egg is not placed
+                {
+                    "condition": "bearerTime == 0", // <-- When the bearer changed (someone stole the egg)
+                    "command": "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down in the next 10 Minutes!\", \"color\":\"red\"}"
+                }, //                       ^-- will insert the name of the bearer
+                {
+                    "condition": "bearerTime == 300", // <-- 5 minutes after the bearer changed
+                    "command": "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down in the next 5 Minutes!\", \"color\":\"red\"}"
+                }, //                       ^-- will insert the name of the bearer
+                {
+                    "condition": "bearerTime >= 600", // <-- after 10 minutes and every 30 seconds thereafter
+                    "actions": [
+                        "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down!\", \"color\":\"red\"}",
+                        //           ^-- will insert the name of the bearer
+                        "effect give {{bearer_id}} minecraft:poison 5 ${floor(bearerTime / 400)}",
+                        //                 ^-- will insert the uuid of the bearer
+                    ]
+                }
+            ]
+        ]"""
+    )
+    public List<Action> actions = List.of(
+        new Action(
+            "deg:block",
+            null,
+            List.of(
+                new Action(
+                    "tellraw @a {\"text\":\"The Dragon Egg has been deployed. Go find it!\", \"color\":\"yellow\"}"
+                ),
+                new Action(
+                    "effect give {{bearer}} minecraft:strength 300 1",
+                    "totalBlockTime == 0"
+                )
+            ),
+            null
+        ),
+        new Action(
+            "deg:second",
+            new Condition("blockTime == 0 && bearerTime % 30 == 0"),
+            List.of(
+                new Action(
+                    "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down in the next 10 Minutes!\"," +
+                    " \"color\":\"red\"}",
+                    "bearerTime == 0"
+                ),
+                new Action(
+                    "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down in the next 5 Minutes!\", " +
+                    "\"color\":\"red\"}",
+                    "bearerTime == 300"
+                ),
+                new Action(
+                    null,
+                    new Condition("bearerTime >= 600"),
+                    List.of(
+                        new Action(
+                            "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down!\", " +
+                            "\"color\":\"red\"}"),
+                        new Action("effect give {{bearer}} minecraft:poison 5 ${floor(bearerTime / 400)}")
+                    ),
+                    null
+                )
+            ),
+            null
+        )
+    );
     @Comment(
         """
             The visibility of the dragon egg for each position type.

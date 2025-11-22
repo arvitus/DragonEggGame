@@ -5,6 +5,7 @@ import de.arvitus.dragonegggame.api.DragonEggAPI;
 import de.arvitus.dragonegggame.config.Config;
 import de.arvitus.dragonegggame.config.Data;
 import de.arvitus.dragonegggame.config.MessageString;
+import de.arvitus.dragonegggame.features.Actions;
 import eu.pb4.placeholders.api.PlaceholderContext;
 import eu.pb4.placeholders.api.node.TextNode;
 import me.lucko.fabric.api.permissions.v0.Permissions;
@@ -100,6 +101,7 @@ public class Commands {
             LOGGER.error("Failed to load config, using previous value instead.");
             return false;
         }
+        Actions.register();
         DragonEggAPI.init();
         LOGGER.info("Reloaded DragonEggGame config and data");
         return true;
