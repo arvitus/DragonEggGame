@@ -1,6 +1,5 @@
 package de.arvitus.dragonegggame.api;
 
-import de.arvitus.dragonegggame.DragonEggGame;
 import de.arvitus.dragonegggame.Events;
 import de.arvitus.dragonegggame.config.Config;
 import de.arvitus.dragonegggame.config.Data;
@@ -24,8 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static de.arvitus.dragonegggame.DragonEggGame.CONFIG;
-import static de.arvitus.dragonegggame.DragonEggGame.LOGGER;
+import static de.arvitus.dragonegggame.DragonEggGame.*;
 
 
 public class DragonEggAPI {
@@ -42,8 +40,8 @@ public class DragonEggAPI {
 
     private static void load_data() {
         data = Data.load();
-        if (DragonEggGame.server != null) {
-            data.world = DragonEggGame.server.getWorld(RegistryKey.of(RegistryKeys.WORLD, Identifier.of(data.worldId)));
+        if (server != null) {
+            data.world = server.getWorld(RegistryKey.of(RegistryKeys.WORLD, Identifier.of(data.worldId)));
             if (data.world == null) {
                 LOGGER.warn("Could not find world with id '{}'", data.worldId);
             }
