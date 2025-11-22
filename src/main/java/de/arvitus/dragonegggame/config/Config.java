@@ -173,50 +173,7 @@ public class Config {
             ]
         ]"""
     )
-    public List<Action> actions = List.of(
-        new Action(
-            "deg:block",
-            null,
-            List.of(
-                new Action(
-                    "tellraw @a {\"text\":\"The Dragon Egg has been deployed. Go find it!\", \"color\":\"yellow\"}"
-                ),
-                new Action(
-                    "effect give {{bearer}} minecraft:strength 300 1",
-                    "totalBlockTime == 0"
-                )
-            ),
-            null
-        ),
-        new Action(
-            "deg:second",
-            new Condition("blockTime == 0 && bearerTime % 30 == 0"),
-            List.of(
-                new Action(
-                    "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down in the next 10 Minutes!\"," +
-                    " \"color\":\"red\"}",
-                    "bearerTime == 0"
-                ),
-                new Action(
-                    "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down in the next 5 Minutes!\", " +
-                    "\"color\":\"red\"}",
-                    "bearerTime == 300"
-                ),
-                new Action(
-                    null,
-                    new Condition("bearerTime >= 600"),
-                    List.of(
-                        new Action(
-                            "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down!\", " +
-                            "\"color\":\"red\"}"),
-                        new Action("effect give {{bearer}} minecraft:poison 5 ${floor(bearerTime / 400)}")
-                    ),
-                    null
-                )
-            ),
-            null
-        )
-    );
+    public List<Action> actions = List.of();
     @Comment(
         """
             The visibility of the dragon egg for each position type.
