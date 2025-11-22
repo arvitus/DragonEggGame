@@ -141,6 +141,7 @@ public class Config {
         [
             {
                 "trigger": "deg:block",
+                "condition": "blockTime == 0", // <-- only run if it was not already a block
                 "actions": [
                     "tellraw @a {\"text\":\"The Dragon Egg has been deployed. Go find it!\", \"color\":\"yellow\"}",
                     {
