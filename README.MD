@@ -1,6 +1,6 @@
 <div align="center">
 
-# Dragon Egg Game | SMP Minigame
+# Dragon Egg Game
 
 [![Static Badge](https://img.shields.io/badge/modrinth-00AF5C?logo=modrinth&logoColor=white)](https://modrinth.com/mod/dragonegggame)
 [![Static Badge](https://img.shields.io/badge/GitHub-181717?logo=github)](https://github.com/arvitus/DragonEggGame)
