@@ -119,58 +119,60 @@ public class Config {
         
         Format:
         [ // a list of Actions
-            <Action1>, // see below for Action object format
-            <Action2>,
-            ...
+          <Action1>, // see below for Action object format
+          <Action2>,
+          ...
         ]
         
         Action Object:
         {
-            "trigger": "<trigger>", // the trigger that activates this Action (required at top level, otherwise ignored)
-            "condition": "<expression>", // the condition that must be met (<expression> != 0) for the Action to run (optional)
-            "actions": [ // a list of Actions to execute (optional)
-                "<command>", // shorthand for an Action with only a command,
-                <Action2>, // an Action object
-                ...
-            ],
-            "command": "<command>" // a minecraft command to execute (optional)
-            // you can use any valid Minecraft command here, including commands added by other mods
+          "trigger": "<trigger>", // the trigger that activates this Action (required at top level, otherwise ignored)
+          "condition": "<expression>", // the condition that must be met (<expression> != 0) for the Action to run (optional)
+          "actions": [ // a list of Actions to execute (optional)
+            "<command>", // shorthand for an Action with only a command,
+            <Action2>, // an Action object
+            ...
+          ],
+          "command": "<command>" // a minecraft command to execute (optional)
+          // you can use any valid Minecraft command here, including commands added by other mods
         }
         
         Example:
         [
-            {
-                "trigger": "deg:block",
-                "condition": "blockTime == 0", // <-- only run if it was not already a block
-                "actions": [
-                    "tellraw @a {\"text\":\"The Dragon Egg has been deployed. Go find it!\", \"color\":\"yellow\"}",
-                    {
-                        "condition": "totalBlockTime == 0", // <-- only run once when the egg is placed the first time
-                        "command": "effect give {{bearer_id}} minecraft:strength 300 1"
-                    } //                              ^-- will insert the uuid of the bearer
-                ]
-            },
-            {
-                "trigger": "deg:second",
-                "condition": "blockTime == 0 && bearerTime % 30 == 0": [ // <-- runs every 30 seconds if the egg is not placed
-                {
-                    "condition": "bearerTime == 0", // <-- When the bearer changed (someone stole the egg)
-                    "command": "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down in the next 10 Minutes!\", \"color\":\"red\"}"
-                }, //                       ^-- will insert the name of the bearer
-                {
-                    "condition": "bearerTime == 300", // <-- 5 minutes after the bearer changed
-                    "command": "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down in the next 5 Minutes!\", \"color\":\"red\"}"
-                }, //                       ^-- will insert the name of the bearer
-                {
-                    "condition": "bearerTime >= 600", // <-- after 10 minutes and every 30 seconds thereafter
-                    "actions": [
-                        "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down!\", \"color\":\"red\"}",
-                        //           ^-- will insert the name of the bearer
-                        "effect give {{bearer_id}} minecraft:poison 5 ${floor(bearerTime / 400)}",
-                        //                 ^-- will insert the uuid of the bearer
-                    ]
-                }
+          {
+            "trigger": "deg:block",
+            "condition": "blockTime == 0", // <-- only run if it was not already a block
+            "actions": [
+              "tellraw @a {\"text\":\"The Dragon Egg has been deployed. Go find it!\", \"color\":\"yellow\"}",
+              {
+                "condition": "totalBlockTime == 0", // <-- only run once when the egg is placed the first time
+                "command": "effect give {{bearer_id}} minecraft:strength 300 1"
+              } //                            ^-- will insert the uuid of the bearer
             ]
+          },
+          {
+            "trigger": "deg:second",
+            "condition": "blockTime == 0 && bearerTime % 30 == 0", // <-- runs every 30 seconds if the egg is not placed
+            "actions": [
+              {
+                "condition": "bearerTime == 0", // <-- When the bearer changed (someone stole the egg)
+                "command": "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down in the next 10 Minutes!\", \"color\":\"red\"}"
+              }, //                     ^-- will insert the name of the bearer
+              {
+                "condition": "bearerTime == 300", // <-- 5 minutes after the bearer changed
+                "command": "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down in the next 5 Minutes!\", \"color\":\"red\"}"
+              }, //                     ^-- will insert the name of the bearer
+              {
+                "condition": "bearerTime >= 600", // <-- after 10 minutes and every 30 seconds thereafter
+                "actions": [
+                  "tellraw {{bearer}} {\"text\":\"The Dragon Egg needs to be placed down!\", \"color\":\"red\"}",
+                  //           ^-- will insert the name of the bearer
+                  "effect give {{bearer_id}} minecraft:poison 5 ${floor(bearerTime / 400)}",
+                  //                 ^-- will insert the uuid of the bearer
+                ]
+              }
+            ]
+          }
         ]"""
     )
     public List<Action> actions = List.of();
