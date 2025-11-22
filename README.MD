@@ -7,7 +7,7 @@
 [![Static Badge](https://img.shields.io/badge/Discord-5662f6?logo=discord&logoColor=white)](https://discord.gg/xzdbetZVrn)
 
 A Minecraft mod that adds a small, capture the flag-like minigame to your SMP, making use of the otherwise rarely used
-dragon egg.
+Dragon Egg.
 
 </div>
 
