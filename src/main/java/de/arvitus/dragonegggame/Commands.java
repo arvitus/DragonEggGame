@@ -54,7 +54,7 @@ public class Commands {
                                             .withClickEvent(new ClickEvent.OpenUrl(URI.create(meta
                                                 .getContact()
                                                 .get("source")
-                                                .orElse("https://github.com/arvitus")
+                                                .orElse("https://github.com/arvitus/DragonEggGame")
                                             )))
                                             .withHoverEvent(new HoverEvent.ShowText(
                                                 Text.of("Click to view source")
