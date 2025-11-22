@@ -13,6 +13,8 @@ Dragon Egg.
 
 ---
 
+<h6 id="trivia"></h6>
+
 # Trivia
 
 On our SMP Server, we never had any use for the Dragon Egg. After we defeat the Ender Dragon, someone would usually just
@@ -21,6 +23,8 @@ which there exists only one of, never had the opportunity to be used for somethi
 similar on another SMP, we decided to make a minigame out of it. This way the Dragon Egg would always be in play and
 also encourage some player interaction. This mod helped us enforce the rules of the game and made it easier to play.
 **Now we want to share it with you!**
+
+<h6 id="rules"></h6>
 
 # Rules
 
@@ -32,6 +36,8 @@ These are the rules we came up with for our server. Of course, you can change th
 - It is allowed to hide the egg or protect it from getting stolen but one should be able to obtain it without breaking
   blocks or any massive technical knowledge.
 - *It's supposed to be fun, so don't take it too seriously!*
+
+<h6 id="features"></h6>
 
 # Features
 
@@ -51,7 +57,7 @@ These are the rules we came up with for our server. Of course, you can change th
   on [GitHub](https://github.com/arvitus/DragonEggGame) for usage)
 - **IMPORTANT: It breaks when there is more than one Dragon Egg!**
 
-<h3 id="commands"></h3>
+<h6 id="commands"></h6>
 
 # Commands
 
@@ -62,7 +68,7 @@ These are the rules we came up with for our server. Of course, you can change th
 | `/deg`               | Mod info                                             | `deg.admin`, `4`            |
 | `/deg reload`        | Reloads the config                                   | `deg.admin.reload`, `4`     |
 
-<h3 id="placeholders"></h3>
+<h6 id="placeholders"></h6>
 
 # Placeholders
 
@@ -131,6 +137,8 @@ visibility {
   PLAYER = HIDDEN
 }
 ```
+
+<h6 id="tips"></h6>
 
 # Tips
 
