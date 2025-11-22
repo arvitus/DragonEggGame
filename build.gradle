@@ -50,14 +50,15 @@ tasks {
     }
 
     processResources {
-        inputs.property "version", project.version
-        inputs.property "minecraft_version", project.minecraft_version
-        inputs.property "loader_version", project.loader_version
+        def map = [
+            "version"          : project.mod_version,
+            "minecraft_version": project.minecraft_version,
+            "loader_version"   : project.loader_version
+        ]
+        inputs.properties(map)
 
         filesMatching("fabric.mod.json") {
-            expand "version": project.mod_version,
-                "minecraft_version": project.minecraft_version,
-                "loader_version": project.loader_version
+            expand(map)
         }
     }
 }
