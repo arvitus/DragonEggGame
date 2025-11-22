@@ -21,10 +21,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static de.arvitus.dragonegggame.DragonEggGame.CONFIG;
@@ -37,7 +34,9 @@ public class DragonEggAPI {
     private static @Nullable Data data;
 
     public static void init() {
+        Data oldData = data;
         load_data();
+        if (Objects.equals(oldData, data)) return;
         dispatchUpdate();
     }
 
