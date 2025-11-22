@@ -47,6 +47,8 @@ tasks {
         enableAutoRelocation = true
         configurations = [project.configurations.shadow]
         minimize()
+
+        from("LICENSE")
     }
 
     processResources {
@@ -84,10 +86,4 @@ java {
     // if it is present.
     // If you remove this line, sources will not be generated.
     withSourcesJar()
-}
-
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
-    }
 }
