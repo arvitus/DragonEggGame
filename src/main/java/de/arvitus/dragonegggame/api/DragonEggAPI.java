@@ -13,6 +13,7 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -123,13 +124,11 @@ public class DragonEggAPI {
         );
 
 
-        if (entity != null) {
-            data.entityUUID = entity.getUuid();
-            if (type == PositionType.PLAYER) {
-                data.playerUUID = entity.getUuid();
-            }
-            trackEntity(entity);
-        } else data.entityUUID = null;
+        data.entityUUID = entity != null ? entity.getUuid() : null;
+        if (entity instanceof ServerPlayerEntity player && !Objects.equals(data.playerUUID, player.getUuid())) {
+            data.durations = new Data.Durations();
+            data.playerUUID = player.getUuid();
+        }
 
         World oldWorld = data.world != null ? data.world : world;
         if (
