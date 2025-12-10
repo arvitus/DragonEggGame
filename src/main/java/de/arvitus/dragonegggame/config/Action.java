@@ -56,7 +56,7 @@ public record Action(
         if (command != null) {
             String c = command.getCommand(expressionVariables, localPlaceholders);
             devLogger("Executing command: {}", c);
-            commandSource.getServer().getCommandManager().executeWithPrefix(commandSource, c);
+            commandSource.getServer().getCommandManager().parseAndExecute(commandSource, c);
         }
         if (actions != null)
             for (Action action : actions)

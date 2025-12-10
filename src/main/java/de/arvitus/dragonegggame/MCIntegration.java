@@ -3,6 +3,7 @@ package de.arvitus.dragonegggame;
 import de.arvitus.dragonegggame.api.DragonEggAPI;
 import de.arvitus.dragonegggame.config.Data;
 import eu.pb4.placeholders.api.PlaceholderContext;
+import net.minecraft.command.permission.LeveledPermissionPredicate;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -35,7 +36,9 @@ public class MCIntegration {
             if (player == null) return;
             server.getPlayerManager().broadcast(
                 CONFIG.messages.bearerChanged.node.toText(
-                    PlaceholderContext.of(player.getCommandSource().withLevel(4))
+                    PlaceholderContext.of(player
+                        .getCommandSource()
+                        .withAdditionalPermissions(LeveledPermissionPredicate.OWNERS))
                 ),
                 false
             );

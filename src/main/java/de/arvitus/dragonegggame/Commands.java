@@ -12,6 +12,8 @@ import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.ModMetadata;
+import net.minecraft.command.permission.LeveledPermissionPredicate;
+import net.minecraft.command.permission.PermissionLevel;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
@@ -29,10 +31,10 @@ public class Commands {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(
                 literal(DragonEggGame.MOD_ID_ALIAS)
-                    .requires(Permissions.require(Perms.ADMIN, 4))
+                    .requires(Permissions.require(Perms.ADMIN, PermissionLevel.OWNERS))
                     .then(
                         literal("reload")
-                            .requires(Permissions.require(Perms.RELOAD, 4))
+                            .requires(Permissions.require(Perms.RELOAD, PermissionLevel.OWNERS))
                             .executes(Commands::reload)
                     )
                     .executes(context -> {
@@ -111,7 +113,9 @@ public class Commands {
         ServerCommandSource source = context.getSource();
         Data data = DragonEggAPI.getData();
         if (data == null) {
-            source.sendError(CONFIG.messages.bearerError.node.toText(PlaceholderContext.of(source.withLevel(4))));
+            source.sendError(CONFIG.messages.bearerError.node.toText(PlaceholderContext.of(
+                source.withAdditionalPermissions(LeveledPermissionPredicate.OWNERS)
+            )));
             return -1;
         }
 
@@ -124,13 +128,18 @@ public class Commands {
         };
 
         TextNode node = message.node;
-        source.sendFeedback(() -> node.toText(PlaceholderContext.of(source.withLevel(4))), false);
+        source.sendFeedback(
+            () -> node.toText(PlaceholderContext.of(source.withAdditionalPermissions(LeveledPermissionPredicate.OWNERS))),
+            false
+        );
         return 0;
     }
 
     private static int dragon_egg$info(CommandContext<ServerCommandSource> context) {
         context.getSource().sendFeedback(
-            () -> CONFIG.messages.info.node.toText(PlaceholderContext.of(context.getSource().withLevel(4))),
+            () -> CONFIG.messages.info.node.toText(PlaceholderContext.of(context
+                .getSource()
+                .withAdditionalPermissions(LeveledPermissionPredicate.OWNERS))),
             false
         );
         return 0;
