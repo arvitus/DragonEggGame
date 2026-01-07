@@ -69,7 +69,7 @@ public class Events {
                 entity.getRemovalReason() == Entity.RemovalReason.KILLED &&
                 fallingBlock.getBlockState().isOf(Blocks.DRAGON_EGG)
             ) {
-                fallingBlock.dropItem(world, fallingBlock.getBlockState().getBlock());
+                fallingBlock.dropItem(fallingBlock.getBlockState().getBlock());
             }
 
             /*
@@ -113,8 +113,7 @@ public class Events {
 
             if (blockEntity instanceof LockableContainerBlockEntity containerBlockEntity) {
                 MinecraftServer server = world.getServer();
-                server.send(new ServerTask(
-                    server.getTicks(), () -> {
+                server.send(new ServerTask(server.getTicks(), () -> {
                     if (containerBlockEntity.isRemoved() || containerBlockEntity.isEmpty()) return;
                     for (int i = 0; i < containerBlockEntity.size(); i++) {
                         ItemStack stack = containerBlockEntity.getStack(i);
@@ -128,8 +127,7 @@ public class Events {
                             break;
                         }
                     }
-                }
-                ));
+                }));
             }
         });
     }
