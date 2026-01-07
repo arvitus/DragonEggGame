@@ -1,13 +1,13 @@
 package de.arvitus.dragonegggame.api;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 import java.util.function.Consumer;
 
 public abstract class EventsApi {
     private static final Map<Identifier, LinkedHashSet<Consumer<Event<?>>>> eventListeners = new HashMap<>();
-    private static final Identifier ANY = Identifier.of("events", "any");
+    private static final Identifier ANY = Identifier.fromNamespaceAndPath("events", "any");
 
     public static void listen(Consumer<Event<?>> listener) {
         listen(ANY, listener);

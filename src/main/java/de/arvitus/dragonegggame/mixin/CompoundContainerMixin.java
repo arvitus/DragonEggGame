@@ -1,8 +1,8 @@
 package de.arvitus.dragonegggame.mixin;
 
 import de.arvitus.dragonegggame.interfaces.DoubleInventoryHelper;
-import net.minecraft.inventory.DoubleInventory;
-import net.minecraft.inventory.Inventory;
+import net.minecraft.world.CompoundContainer;
+import net.minecraft.world.Container;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,19 +12,19 @@ import org.spongepowered.asm.mixin.Shadow;
  * Copied from
  * <a href="https://github.com/QuiltServerTools/Ledger/blob/master/src/main/java/com/github/quiltservertools/ledger/mixin/DoubleInventoryMixin.java">ledger</a>
  */
-@Mixin(DoubleInventory.class)
-public abstract class DoubleInventoryMixin implements DoubleInventoryHelper {
+@Mixin(CompoundContainer.class)
+public abstract class CompoundContainerMixin implements DoubleInventoryHelper {
     @Shadow
     @Final
-    private Inventory first;
+    private Container container1;
 
     @Shadow
     @Final
-    private Inventory second;
+    private Container container2;
 
     @NotNull
     @Override
-    public Inventory dragonEggGame$getInventory(int slot) {
-        return slot >= this.first.size() ? this.second : this.first;
+    public Container dragonEggGame$getInventory(int slot) {
+        return slot >= this.container1.getContainerSize() ? this.container2 : this.container1;
     }
 }

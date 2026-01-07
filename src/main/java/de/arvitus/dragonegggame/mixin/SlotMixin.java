@@ -4,14 +4,14 @@ import de.arvitus.dragonegggame.api.DragonEggAPI;
 import de.arvitus.dragonegggame.interfaces.BlockInventory;
 import de.arvitus.dragonegggame.interfaces.DoubleInventoryHelper;
 import de.arvitus.dragonegggame.utils.Utils;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,24 +29,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class SlotMixin {
     @Shadow
     @Final
-    public Inventory inventory;
+    public Container container;
     @Shadow
     @Final
-    private int index;
+    private int slot;
 
-    @Inject(method = "setStack(Lnet/minecraft/item/ItemStack;)V", at = @At("HEAD"))
+    @Inject(method = "setByPlayer(Lnet/minecraft/world/item/ItemStack;)V", at = @At("HEAD"))
     private void onStackChange(ItemStack stack, CallbackInfo ci) {
         if (!Utils.isOrHasDragonEgg(stack)) return;
 
-        switch (this.inventory) {
-            case PlayerInventory playerInventory -> DragonEggAPI.updatePosition(playerInventory.player);
+        switch (this.container) {
+            case Inventory playerInventory -> DragonEggAPI.updatePosition(playerInventory.player);
             case BlockEntity blockEntity -> DragonEggAPI.updatePosition(blockEntity);
             case Entity entity -> DragonEggAPI.updatePosition(entity);
             default -> {
                 BlockInventory blockInventory = this.getBlockInventory();
                 if (blockInventory == null) return;
                 BlockPos pos = blockInventory.dragonEggGame$getPos();
-                World world = blockInventory.dragonEggGame$getWorld();
+                Level world = blockInventory.dragonEggGame$getWorld();
                 if (pos == null || world == null) return;
                 DragonEggAPI.updatePosition(DragonEggAPI.PositionType.INVENTORY, pos, world);
             }
@@ -56,9 +56,9 @@ public abstract class SlotMixin {
     @Unique
     @Nullable
     private BlockInventory getBlockInventory() {
-        Inventory slotInventory = this.inventory;
+        Container slotInventory = this.container;
         if (slotInventory instanceof DoubleInventoryHelper doubleInventoryHelper) {
-            slotInventory = doubleInventoryHelper.dragonEggGame$getInventory(this.index);
+            slotInventory = doubleInventoryHelper.dragonEggGame$getInventory(this.slot);
         }
         if (slotInventory instanceof BlockInventory blockInventory) {
             return blockInventory;

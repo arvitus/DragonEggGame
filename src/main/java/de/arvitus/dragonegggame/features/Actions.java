@@ -8,8 +8,8 @@ import de.arvitus.dragonegggame.api.EventsApi;
 import de.arvitus.dragonegggame.config.Action;
 import de.arvitus.dragonegggame.config.Condition.Variables;
 import de.arvitus.dragonegggame.config.Data;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -72,11 +72,11 @@ public class Actions {
                 continue;
             }
             registeredEventListeners
-                .computeIfAbsent(Identifier.of(action.trigger()), k -> new HashSet<>())
+                .computeIfAbsent(Identifier.parse(action.trigger()), k -> new HashSet<>())
                 .add(event -> {
                     if (server == null) return;
                     action.executeSafe(
-                        server.getCommandSource().withSilent(),
+                        server.createCommandSourceStack().withSuppressedOutput(),
                         event.expressionVariables,
                         event.localPlaceholders
                     );
@@ -113,7 +113,7 @@ public class Actions {
         Event<Void> event = new Event<>(variables, placeholders, null);
 
         Consumer<MinecraftServer> calculateVariables = server -> {
-            long currentTime = server.getOverworld().getTime();
+            long currentTime = server.overworld().getGameTime();
             variables.put(Variables.BEARER_TIME, Math.floor(data.getBearerTime(currentTime) / 20d));
             for (DragonEggAPI.PositionType type : DragonEggAPI.PositionType.values()) {
                 List<String> value = positionTypeToTimeVariables.get(type);
@@ -142,7 +142,7 @@ public class Actions {
 
     private static void emitEvent(String eventName, Event<?> event) {
         try {
-            EventsApi.emit(Identifier.of(MOD_ID_ALIAS, eventName), event);
+            EventsApi.emit(Identifier.fromNamespaceAndPath(MOD_ID_ALIAS, eventName), event);
         } catch (Exception e) {
             LOGGER.warn("Error during event handling: {}", e.getMessage());
         }

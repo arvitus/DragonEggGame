@@ -12,19 +12,19 @@ import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.ModMetadata;
-import net.minecraft.command.permission.LeveledPermissionPredicate;
-import net.minecraft.command.permission.PermissionLevel;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.server.permissions.LevelBasedPermissionSet;
+import net.minecraft.server.permissions.PermissionLevel;
 
 import java.net.URI;
 
 import static de.arvitus.dragonegggame.DragonEggGame.CONFIG;
 import static de.arvitus.dragonegggame.DragonEggGame.LOGGER;
-import static net.minecraft.server.command.CommandManager.literal;
+import static net.minecraft.commands.Commands.literal;
 
 public class Commands {
     public static void register() {
@@ -40,9 +40,9 @@ public class Commands {
                     .executes(context -> {
                         FabricLoader.getInstance().getModContainer(DragonEggGame.MOD_ID).ifPresent(modContainer -> {
                             ModMetadata meta = modContainer.getMetadata();
-                            context.getSource().sendFeedback(
+                            context.getSource().sendSuccess(
                                 () ->
-                                    Text.of(
+                                    Component.literal(
                                         String.format(
                                             "%s v%s by %s",
                                             meta.getName(),
@@ -59,7 +59,7 @@ public class Commands {
                                                 .orElse("https://github.com/arvitus/DragonEggGame")
                                             )))
                                             .withHoverEvent(new HoverEvent.ShowText(
-                                                Text.of("Click to view source")
+                                                Component.literal("Click to view source")
                                             ))),
                                 false
                             );
@@ -85,14 +85,14 @@ public class Commands {
         });
     }
 
-    private static int reload(CommandContext<ServerCommandSource> context) {
+    private static int reload(CommandContext<CommandSourceStack> context) {
         if (!reload()) {
-            context.getSource().sendError(Text.of(
+            context.getSource().sendFailure(Component.literal(
                 "Failed to load config, using previous value instead. See console for more information."));
             return -1;
         }
         context.getSource()
-            .sendFeedback(() -> Text.of("Reloaded DragonEggGame config and data"), false);
+            .sendSuccess(() -> Component.literal("Reloaded DragonEggGame config and data"), false);
         return 1;
     }
 
@@ -109,12 +109,12 @@ public class Commands {
         return true;
     }
 
-    private static int dragon_egg$bearer(CommandContext<ServerCommandSource> context) {
-        ServerCommandSource source = context.getSource();
+    private static int dragon_egg$bearer(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
         Data data = DragonEggAPI.getData();
         if (data == null) {
-            source.sendError(CONFIG.messages.bearerError.node.toText(PlaceholderContext.of(
-                source.withAdditionalPermissions(LeveledPermissionPredicate.OWNERS)
+            source.sendFailure(CONFIG.messages.bearerError.node.toText(PlaceholderContext.of(
+                source.withMaximumPermission(LevelBasedPermissionSet.OWNER)
             )));
             return -1;
         }
@@ -128,18 +128,18 @@ public class Commands {
         };
 
         TextNode node = message.node;
-        source.sendFeedback(
-            () -> node.toText(PlaceholderContext.of(source.withAdditionalPermissions(LeveledPermissionPredicate.OWNERS))),
+        source.sendSuccess(
+            () -> node.toText(PlaceholderContext.of(source.withMaximumPermission(LevelBasedPermissionSet.OWNER))),
             false
         );
         return 0;
     }
 
-    private static int dragon_egg$info(CommandContext<ServerCommandSource> context) {
-        context.getSource().sendFeedback(
+    private static int dragon_egg$info(CommandContext<CommandSourceStack> context) {
+        context.getSource().sendSuccess(
             () -> CONFIG.messages.info.node.toText(PlaceholderContext.of(context
                 .getSource()
-                .withAdditionalPermissions(LeveledPermissionPredicate.OWNERS))),
+                .withMaximumPermission(LevelBasedPermissionSet.OWNER))),
             false
         );
         return 0;

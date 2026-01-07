@@ -3,13 +3,13 @@ package de.arvitus.dragonegggame;
 import de.arvitus.dragonegggame.api.DragonEggAPI;
 import de.arvitus.dragonegggame.config.Data;
 import eu.pb4.placeholders.api.PlaceholderContext;
-import net.minecraft.command.permission.LeveledPermissionPredicate;
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
-import net.minecraft.registry.Registries;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.LevelBasedPermissionSet;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -32,26 +32,26 @@ public class MCIntegration {
 
     public static void announceChange(UUID newBearer) {
         Optional.ofNullable(DragonEggGame.server).ifPresent(server -> {
-            ServerPlayerEntity player = server.getPlayerManager().getPlayer(newBearer);
+            ServerPlayer player = server.getPlayerList().getPlayer(newBearer);
             if (player == null) return;
-            server.getPlayerManager().broadcast(
+            server.getPlayerList().broadcastSystemMessage(
                 CONFIG.messages.bearerChanged.node.toText(
                     PlaceholderContext.of(player
-                        .getCommandSource()
-                        .withAdditionalPermissions(LeveledPermissionPredicate.OWNERS))
+                        .createCommandSourceStack()
+                        .withMaximumPermission(LevelBasedPermissionSet.OWNER))
                 ),
                 false
             );
-            server.getPlayerManager().sendToAll(
-                new PlaySoundS2CPacket(
-                    Registries.SOUND_EVENT.getEntry(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP),
-                    SoundCategory.MASTER,
+            server.getPlayerList().broadcastAll(
+                new ClientboundSoundPacket(
+                    BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvents.EXPERIENCE_ORB_PICKUP),
+                    SoundSource.MASTER,
                     player.getX(),
                     player.getY(),
                     player.getZ(),
                     .5f,
                     1f,
-                    Random.create().nextLong()
+                    RandomSource.create().nextLong()
                 )
             );
         });

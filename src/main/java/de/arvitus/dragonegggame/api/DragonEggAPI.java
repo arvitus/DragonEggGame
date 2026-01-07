@@ -5,18 +5,18 @@ import de.arvitus.dragonegggame.config.Config;
 import de.arvitus.dragonegggame.config.Data;
 import de.arvitus.dragonegggame.utils.ScheduledEvent;
 import de.arvitus.dragonegggame.utils.Utils;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +41,7 @@ public class DragonEggAPI {
     private static void load_data() {
         data = Data.load();
         if (server != null) {
-            data.world = server.getWorld(RegistryKey.of(RegistryKeys.WORLD, Identifier.of(data.worldId)));
+            data.world = server.getLevel(ResourceKey.create(Registries.DIMENSION, Identifier.parse(data.worldId)));
             if (data.world == null) {
                 LOGGER.warn("Could not find world with id '{}'", data.worldId);
             }
@@ -82,25 +82,29 @@ public class DragonEggAPI {
     }
 
     public static void updatePosition(@NotNull Entity entity) {
-        updatePosition(getPositionType(entity), entity.getEntityPos(), entity.getEntityWorld(), entity);
+        updatePosition(getPositionType(entity), entity.position(), entity.level(), entity);
     }
 
     public static void updatePosition(@NotNull BlockEntity blockEntity) {
-        updatePosition(PositionType.INVENTORY, blockEntity.getPos(), Objects.requireNonNull(blockEntity.getWorld()));
+        updatePosition(
+            PositionType.INVENTORY,
+            blockEntity.getBlockPos(),
+            Objects.requireNonNull(blockEntity.getLevel())
+        );
     }
 
-    public static void updatePosition(@NotNull BlockPos pos, @NotNull World world) {
+    public static void updatePosition(@NotNull BlockPos pos, @NotNull Level world) {
         updatePosition(PositionType.BLOCK, pos, world);
     }
 
-    public static void updatePosition(@NotNull PositionType type, @NotNull BlockPos pos, @NotNull World world) {
-        updatePosition(type, pos.toCenterPos(), world, null);
+    public static void updatePosition(@NotNull PositionType type, @NotNull BlockPos pos, @NotNull Level world) {
+        updatePosition(type, pos.getCenter(), world, null);
     }
 
     private static synchronized void updatePosition(
         @NotNull PositionType type,
-        @NotNull Vec3d pos,
-        @NotNull World world,
+        @NotNull Vec3 pos,
+        @NotNull Level world,
         @Nullable Entity entity
     ) {
         if (data == null) {
@@ -115,13 +119,13 @@ public class DragonEggAPI {
         devLogger(
             "Updating Dragon Egg position to type: {}, pos: {}, world: {}, entity: {}",
             type,
-            BlockPos.ofFloored(pos).toShortString(),
-            world.getRegistryKey().getValue(),
+            BlockPos.containing(pos).toShortString(),
+            world.dimension().identifier(),
             entity
         );
 
-        if (type != data.type || (entity != null && !Objects.equals(data.entityUUID, entity.getUuid()))) {
-            long currentTime = Objects.requireNonNull(world.getServer()).getOverworld().getTime();
+        if (type != data.type || (entity != null && !Objects.equals(data.entityUUID, entity.getUUID()))) {
+            long currentTime = Objects.requireNonNull(world.getServer()).overworld().getGameTime();
             long deltaTime = currentTime - data.lastChange;
             switch (data.type) {
                 case BLOCK -> data.durations.block += deltaTime;
@@ -135,23 +139,23 @@ public class DragonEggAPI {
             data.lastChange = currentTime;
         }
 
-        data.entityUUID = entity != null ? entity.getUuid() : null;
-        if (entity instanceof ServerPlayerEntity player && !Objects.equals(data.playerUUID, player.getUuid())) {
+        data.entityUUID = entity != null ? entity.getUUID() : null;
+        if (entity instanceof ServerPlayer player && !Objects.equals(data.playerUUID, player.getUUID())) {
             data.durations = new Data.Durations();
-            data.playerUUID = player.getUuid();
+            data.playerUUID = player.getUUID();
         }
 
-        World oldWorld = data.world != null ? data.world : world;
+        Level oldWorld = data.world != null ? data.world : world;
         if (
             !oldWorld.equals(world) ||
-            !pos.isInRange(data.getRandomizedPosition().toCenterPos(), CONFIG.searchRadius)
+            !pos.closerThan(data.getRandomizedPosition().getCenter(), CONFIG.searchRadius)
         ) {
             data.clearRandomizedPosition();
         }
 
         data.type = type;
         data.world = world;
-        data.worldId = world.getRegistryKey().getValue().toString();
+        data.worldId = world.dimension().identifier().toString();
         data.setPosition(pos);
 
         data.save();
@@ -159,13 +163,13 @@ public class DragonEggAPI {
     }
 
     private static synchronized void trackEntity(Entity entity) {
-        if (CONFIG.getVisibility(getPositionType(entity)) == Config.VisibilityType.EXACT) entity.setGlowing(true);
+        if (CONFIG.getVisibility(getPositionType(entity)) == Config.VisibilityType.EXACT) entity.setGlowingTag(true);
         Events.SCHEDULED_ACTIONS.put(
-            entity.getUuid(), new ScheduledEvent(
+            entity.getUUID(), new ScheduledEvent(
                 100,
                 server -> Optional.ofNullable(DragonEggAPI.getData()).ifPresent(data -> {
                     if (entity.isRemoved()) return;
-                    entity.setGlowing(false);
+                    entity.setGlowingTag(false);
                     if (!Utils.hasDragonEgg(entity)) return;
                     DragonEggAPI.updatePosition(entity);
                 })
@@ -181,7 +185,7 @@ public class DragonEggAPI {
         return switch (entity) {
             case ItemEntity ignored -> PositionType.ITEM;
             case FallingBlockEntity ignored -> PositionType.FALLING_BLOCK;
-            case PlayerEntity ignored -> PositionType.PLAYER;
+            case Player ignored -> PositionType.PLAYER;
             default -> PositionType.ENTITY;
         };
     }
@@ -201,5 +205,5 @@ public class DragonEggAPI {
         PLAYER,
     }
 
-    private record DeferredUpdate(PositionType type, Vec3d pos, World world, Entity entity) {}
+    private record DeferredUpdate(PositionType type, Vec3 pos, Level world, Entity entity) {}
 }
