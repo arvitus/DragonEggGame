@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -24,14 +25,14 @@ public class Placeholders {
         (ctx, arg) -> PlaceholderResult.value(APIUtils.getBearer()),
         modIdentifier("exact_pos"),
         (ctx, arg) -> {
-            if (!Permissions.check(ctx.source(), Perms.EXACT_POS_PLACEHOLDER, 4))
+            if (!Permissions.check(ctx.source(), Perms.EXACT_POS_PLACEHOLDER, PermissionLevel.ADMINS))
                 return PlaceholderResult.invalid("No Permission");
             if (DragonEggAPI.getData() == null) return PlaceholderResult.invalid("No Data");
             return PlaceholderResult.value(DragonEggAPI.getData().getBlockPos().toShortString());
         },
         modIdentifier("randomized_pos"),
         (ctx, arg) -> {
-            if (!Permissions.check(ctx.source(), Perms.RANDOMIZED_POS_PLACEHOLDER, 4))
+            if (!Permissions.check(ctx.source(), Perms.RANDOMIZED_POS_PLACEHOLDER, PermissionLevel.ADMINS))
                 return PlaceholderResult.invalid("No Permission");
             if (DragonEggAPI.getData() == null) return PlaceholderResult.invalid("No Data");
             return PlaceholderResult.value(DragonEggAPI.getData().getRandomizedPosition().toShortString());
