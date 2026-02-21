@@ -213,6 +213,10 @@ public class Config {
                 node.node("visibility").removeChild("NONE");
                 update = true;
             }
+            if (!node.hasChild("blockEnderChest")) {
+                // blockEnderChest and blockContainerItems were added
+                update = true;
+            }
 
             config = node.get(Config.class);
 
