@@ -50,6 +50,13 @@ public class Config {
     public String pointMarkerIcon = "https://minecraft.wiki/images/thumb/Dragon_Egg_JE4.png/150px-Dragon_Egg_JE4.png";
     @Comment("The color of the BlueMap marker as a decimal value.\nDefault: 2818132 (Purple)")
     public int markerColor = 0x2b0054; // Purple
+    @Comment("Whether to prevent the Dragon Egg from entering an Ender Chest. " +
+             "\nThis will also check the contents of container items like Shulker Boxes and Bundles.")
+    public boolean blockEnderChest = true;
+    @Comment("Whether to prevent the Dragon Egg from entering any container item (portable container)," +
+             " e.g. Shulker Boxes and Bundles." +
+             "\nThis is ignored in the creative inventory and does not check container items.")
+    public boolean blockContainerItems = false;
     @Comment("Messages used throughout the mod")
     public Messages messages = new Messages();
     @Comment("The distance in blocks around the Dragon Egg where players count as 'nearby'")
