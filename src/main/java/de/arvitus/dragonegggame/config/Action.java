@@ -1,6 +1,6 @@
 package de.arvitus.dragonegggame.config;
 
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -36,7 +36,7 @@ public record Action(
     }
 
     public void executeSafe(
-        @NotNull ServerCommandSource commandSource,
+        @NotNull CommandSourceStack commandSource,
         @NotNull Map<String, Double> expressionVariables,
         @NotNull Map<String, Supplier<String>> localPlaceholders
     ) {
@@ -49,14 +49,14 @@ public record Action(
     }
 
     public void execute(
-        @NotNull ServerCommandSource commandSource,
+        @NotNull CommandSourceStack commandSource,
         @NotNull Map<String, Double> expressionVariables,
         @NotNull Map<String, Supplier<String>> localPlaceholders
     ) {
         if (command != null) {
             String c = command.getCommand(expressionVariables, localPlaceholders);
             devLogger("Executing command: {}", c);
-            commandSource.getServer().getCommandManager().executeWithPrefix(commandSource, c);
+            commandSource.getServer().getCommands().performPrefixedCommand(commandSource, c);
         }
         if (actions != null)
             for (Action action : actions)

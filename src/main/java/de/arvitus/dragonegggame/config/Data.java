@@ -7,9 +7,9 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 import de.arvitus.dragonegggame.api.DragonEggAPI;
 import de.arvitus.dragonegggame.utils.Utils;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -22,7 +22,7 @@ import java.util.UUID;
 import static de.arvitus.dragonegggame.DragonEggGame.*;
 
 public class Data {
-    public transient @Nullable World world;
+    public transient @Nullable Level world;
     @SerializedName("world")
     public @NotNull String worldId = "minecraft:overworld";
     @SerializedName("entity_uuid")
@@ -66,14 +66,14 @@ public class Data {
     }
 
     public @NotNull BlockPos getBlockPos() {
-        return BlockPos.ofFloored(getPosition());
+        return BlockPos.containing(getPosition());
     }
 
-    public @NotNull Vec3d getPosition() {
-        return this._position == null ? Vec3d.ZERO : new Vec3d(this._position);
+    public @NotNull Vec3 getPosition() {
+        return this._position == null ? Vec3.ZERO : new Vec3(this._position);
     }
 
-    public void setPosition(@NotNull Vec3d position) {
+    public void setPosition(@NotNull Vec3 position) {
         this._position = position.toVector3f();
     }
 

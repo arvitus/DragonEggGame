@@ -2,11 +2,11 @@ package de.arvitus.dragonegggame.mixin;
 
 import de.arvitus.dragonegggame.api.DragonEggAPI;
 import de.arvitus.dragonegggame.utils.Utils;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.HopperBlockEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,19 +16,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(HopperBlockEntity.class)
 public abstract class HopperBlockEntityMixin {
     @Inject(
-        method = "transfer(Lnet/minecraft/inventory/Inventory;Lnet/minecraft/inventory/Inventory;" +
-                 "Lnet/minecraft/item/ItemStack;ILnet/minecraft/util/math/Direction;)Lnet/minecraft/item/ItemStack;",
-        at = @At(value = "INVOKE", target = "net/minecraft/inventory/Inventory.markDirty()V", shift = At.Shift.AFTER)
+        method = "tryMoveInItem",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/Container;setChanged()V", shift = At.Shift.AFTER)
     )
     private static void transfer(
-        @Nullable Inventory from,
-        Inventory to,
+        @Nullable Container from,
+        Container to,
         ItemStack stack,
         int slot,
         @Nullable Direction side,
         CallbackInfoReturnable<ItemStack> cir
     ) {
-        if (Utils.isOrHasDragonEgg(to.getStack(slot)) && to instanceof BlockEntity blockEntity) {
+        if (Utils.isOrHasDragonEgg(to.getItem(slot)) && to instanceof BlockEntity blockEntity) {
             DragonEggAPI.updatePosition(blockEntity);
         }
     }

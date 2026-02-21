@@ -9,7 +9,7 @@ import de.arvitus.dragonegggame.config.Action;
 import de.arvitus.dragonegggame.config.Condition.Variables;
 import de.arvitus.dragonegggame.config.Data;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 import static de.arvitus.dragonegggame.DragonEggGame.*;
 
 public class Actions {
-    private static final Map<Identifier, HashSet<Consumer<Event<?>>>> registeredEventListeners = new HashMap<>();
+    private static final Map<ResourceLocation, HashSet<Consumer<Event<?>>>> registeredEventListeners = new HashMap<>();
     private static final Map<DragonEggAPI.PositionType, List<String>> positionTypeToTimeVariables = Map.of(
         DragonEggAPI.PositionType.BLOCK, List.of(
             Variables.CONTINUOUS_BLOCK_TIME,
@@ -59,7 +59,7 @@ public class Actions {
 
     public static void register() {
         LOGGER.info("Registering event listeners for {}", MOD_ID);
-        for (Map.Entry<Identifier, HashSet<Consumer<Event<?>>>> entry : registeredEventListeners.entrySet()) {
+        for (Map.Entry<ResourceLocation, HashSet<Consumer<Event<?>>>> entry : registeredEventListeners.entrySet()) {
             for (Consumer<Event<?>> listener : entry.getValue()) {
                 EventsApi.removeListener(entry.getKey(), listener);
             }
@@ -72,18 +72,18 @@ public class Actions {
                 continue;
             }
             registeredEventListeners
-                .computeIfAbsent(Identifier.of(action.trigger()), k -> new HashSet<>())
+                .computeIfAbsent(ResourceLocation.parse(action.trigger()), k -> new HashSet<>())
                 .add(event -> {
                     if (server == null) return;
                     action.executeSafe(
-                        server.getCommandSource().withSilent(),
+                        server.createCommandSourceStack().withSuppressedOutput(),
                         event.expressionVariables,
                         event.localPlaceholders
                     );
                 });
         }
 
-        for (Map.Entry<Identifier, HashSet<Consumer<Event<?>>>> entry : registeredEventListeners.entrySet()) {
+        for (Map.Entry<ResourceLocation, HashSet<Consumer<Event<?>>>> entry : registeredEventListeners.entrySet()) {
             for (Consumer<Event<?>> listener : entry.getValue()) {
                 EventsApi.listen(entry.getKey(), listener);
             }
@@ -113,7 +113,7 @@ public class Actions {
         Event<Void> event = new Event<>(variables, placeholders, null);
 
         Consumer<MinecraftServer> calculateVariables = server -> {
-            long currentTime = server.getOverworld().getTime();
+            long currentTime = server.overworld().getGameTime();
             variables.put(Variables.BEARER_TIME, Math.floor(data.getBearerTime(currentTime) / 20d));
             for (DragonEggAPI.PositionType type : DragonEggAPI.PositionType.values()) {
                 List<String> value = positionTypeToTimeVariables.get(type);
@@ -142,7 +142,7 @@ public class Actions {
 
     private static void emitEvent(String eventName, Event<?> event) {
         try {
-            EventsApi.emit(Identifier.of(MOD_ID_ALIAS, eventName), event);
+            EventsApi.emit(ResourceLocation.fromNamespaceAndPath(MOD_ID_ALIAS, eventName), event);
         } catch (Exception e) {
             LOGGER.warn("Error during event handling: {}", e.getMessage());
         }

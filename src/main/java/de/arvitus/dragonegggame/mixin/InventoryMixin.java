@@ -2,10 +2,10 @@ package de.arvitus.dragonegggame.mixin;
 
 import de.arvitus.dragonegggame.api.DragonEggAPI;
 import de.arvitus.dragonegggame.utils.Utils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,13 +17,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * Inspired by
  * <a href="https://github.com/QuiltServerTools/Ledger/blob/master/src/main/java/com/github/quiltservertools/ledger/mixin/LockableContainerBlockEntityMixin.java">ledger</a>
  */
-@Mixin(PlayerInventory.class)
-public abstract class PlayerInventoryMixin implements Inventory {
+@Mixin(Inventory.class)
+public abstract class InventoryMixin implements Container {
     @Shadow
     @Final
-    public PlayerEntity player;
+    public Player player;
 
-    @Inject(method = "insertStack(Lnet/minecraft/item/ItemStack;)Z", at = @At("RETURN"))
+    @Inject(method = "add(Lnet/minecraft/world/item/ItemStack;)Z", at = @At("RETURN"))
     private void onItemInsertion(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         ItemStack itemStack = stack.copyWithCount(cir.getReturnValue() ? 1 : 0);
         if (Utils.isOrHasDragonEgg(itemStack)) DragonEggAPI.updatePosition(this.player);

@@ -1,14 +1,14 @@
 package de.arvitus.dragonegggame.interfaces;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public interface BlockInventory {
-    DefaultedList<ItemStack> dragonEggGame$getInventory();
+    NonNullList<ItemStack> dragonEggGame$getInventory();
 
     BlockPos dragonEggGame$getPos();
 
-    World dragonEggGame$getWorld();
+    Level dragonEggGame$getWorld();
 }

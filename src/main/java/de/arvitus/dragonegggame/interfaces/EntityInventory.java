@@ -1,13 +1,13 @@
 package de.arvitus.dragonegggame.interfaces;
 
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public interface EntityInventory {
-    SimpleInventory dragonEggGame$getInventory();
+    SimpleContainer dragonEggGame$getInventory();
 
-    Vec3d dragonEggGame$getPos();
+    Vec3 dragonEggGame$getPos();
 
-    World dragonEggGame$getWorld();
+    Level dragonEggGame$getWorld();
 }

@@ -11,7 +11,7 @@ import de.bluecolored.bluemap.api.markers.MarkerSet;
 import de.bluecolored.bluemap.api.markers.POIMarker;
 import de.bluecolored.bluemap.api.math.Color;
 import de.bluecolored.bluemap.api.math.Shape;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 import java.io.IOException;
 import java.util.Map;
@@ -81,9 +81,9 @@ class BlueMapIntegration {
                     return;
                 case EXACT:
                     POINT_MARKER.setPosition(
-                        data.getPosition().getX(),
-                        data.getPosition().getY(),
-                        data.getPosition().getZ()
+                        data.getPosition().x(),
+                        data.getPosition().y(),
+                        data.getPosition().z()
                     );
                     MARKER_SET.put("dragon_egg", POINT_MARKER);
                     break;

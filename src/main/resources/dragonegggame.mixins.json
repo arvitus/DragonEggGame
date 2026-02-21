@@ -4,17 +4,17 @@
   "package": "de.arvitus.dragonegggame.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "AbstractHorseEntityMixin",
-    "DoubleInventoryMixin",
+    "AbstractHorseMixin",
+    "CompoundContainerMixin",
     "EntityMixin",
     "HopperBlockEntityMixin",
-    "HorseScreenHandlerMixin",
+    "HorseInventoryMenuMixin",
     "ItemEntityMixin",
-    "LockableContainerBlockEntityMixin",
-    "PlayerInventoryMixin",
-    "ServerWorldMixin",
+    "BaseContainerBlockEntityMixin",
+    "InventoryMixin",
+    "ServerLevelMixin",
     "SlotMixin",
-    "VehicleInventoryMixin"
+    "ContainerEntityMixin"
   ],
   "client": [
   ],

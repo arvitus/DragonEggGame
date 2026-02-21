@@ -7,19 +7,19 @@ import de.arvitus.dragonegggame.config.Data;
 import eu.pb4.placeholders.api.PlaceholderHandler;
 import eu.pb4.placeholders.api.PlaceholderResult;
 import me.lucko.fabric.api.permissions.v0.Permissions;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Map;
 
 import static de.arvitus.dragonegggame.DragonEggGame.CONFIG;
 
 public class Placeholders {
-    public static final Map<Identifier, PlaceholderHandler> PLACEHOLDERS = Map.of(
+    public static final Map<ResourceLocation, PlaceholderHandler> PLACEHOLDERS = Map.of(
         modIdentifier("bearer"),
         (ctx, arg) -> PlaceholderResult.value(APIUtils.getBearer()),
         modIdentifier("exact_pos"),
@@ -52,18 +52,18 @@ public class Placeholders {
         modIdentifier("item"),
         (ctx, arg) -> {
             // from https://github.com/Patbox/TextPlaceholderAPI/blob/276a9c0f19e0ceed0140ce2e028fa438f3859632/src/main/java/eu/pb4/placeholders/impl/GeneralUtils.java#L188
-            ItemStack stack = Items.DRAGON_EGG.getDefaultStack();
-            MutableText mutableText = Text
+            ItemStack stack = Items.DRAGON_EGG.getDefaultInstance();
+            MutableComponent mutableText = Component
                 .empty()
-                .append(stack.getName())
-                .formatted(stack.getRarity().getFormatting())
-                .styled(style -> style.withHoverEvent(new HoverEvent.ShowItem(stack)));
+                .append(stack.getHoverName())
+                .withStyle(stack.getRarity().color())
+                .withStyle(style -> style.withHoverEvent(new HoverEvent.ShowItem(stack)));
             return PlaceholderResult.value(mutableText);
         }
     );
 
-    public static Identifier modIdentifier(String path) {
-        return Identifier.of(DragonEggGame.MOD_ID_ALIAS, path);
+    public static ResourceLocation modIdentifier(String path) {
+        return ResourceLocation.fromNamespaceAndPath(DragonEggGame.MOD_ID_ALIAS, path);
     }
 
     public static void register() {
