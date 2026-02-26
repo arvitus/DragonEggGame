@@ -37,35 +37,7 @@ public class Commands {
                             .requires(Permissions.require(Perms.RELOAD, PermissionLevel.OWNERS))
                             .executes(Commands::reload)
                     )
-                    .executes(context -> {
-                        FabricLoader.getInstance().getModContainer(DragonEggGame.MOD_ID).ifPresent(modContainer -> {
-                            ModMetadata meta = modContainer.getMetadata();
-                            context.getSource().sendSuccess(
-                                () ->
-                                    Component.literal(
-                                        String.format(
-                                            "%s v%s by %s",
-                                            meta.getName(),
-                                            meta.getVersion(),
-                                            meta.getAuthors().stream().findFirst().isEmpty()
-                                                ? "Unknown"
-                                                : meta.getAuthors().stream().findFirst().get().getName()
-                                        )
-                                    ).copy().setStyle(
-                                        Style.EMPTY
-                                            .withClickEvent(new ClickEvent.OpenUrl(URI.create(meta
-                                                .getContact()
-                                                .get("source")
-                                                .orElse("https://github.com/arvitus/DragonEggGame")
-                                            )))
-                                            .withHoverEvent(new HoverEvent.ShowText(
-                                                Component.literal("Click to view source")
-                                            ))),
-                                false
-                            );
-                        });
-                        return 0;
-                    })
+                    .executes(Commands::deg$info)
             );
 
             dispatcher.register(
@@ -107,6 +79,36 @@ public class Commands {
         DragonEggAPI.init();
         LOGGER.info("Reloaded DragonEggGame config and data");
         return true;
+    }
+
+    private static int deg$info(CommandContext<CommandSourceStack> context) {
+        FabricLoader.getInstance().getModContainer(DragonEggGame.MOD_ID).ifPresent(modContainer -> {
+            ModMetadata meta = modContainer.getMetadata();
+            context.getSource().sendSuccess(
+                () ->
+                    Component.literal(
+                        String.format(
+                            "%s v%s by %s",
+                            meta.getName(),
+                            meta.getVersion(),
+                            meta.getAuthors().stream().findFirst().isEmpty()
+                                ? "Unknown"
+                                : meta.getAuthors().stream().findFirst().get().getName()
+                        )
+                    ).copy().setStyle(
+                        Style.EMPTY
+                            .withClickEvent(new ClickEvent.OpenUrl(URI.create(meta
+                                .getContact()
+                                .get("source")
+                                .orElse("https://github.com/arvitus/DragonEggGame")
+                            )))
+                            .withHoverEvent(new HoverEvent.ShowText(
+                                Component.literal("Click to view source")
+                            ))),
+                false
+            );
+        });
+        return 0;
     }
 
     private static int dragon_egg$bearer(CommandContext<CommandSourceStack> context) {
