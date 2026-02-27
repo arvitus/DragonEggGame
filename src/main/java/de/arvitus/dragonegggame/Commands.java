@@ -51,6 +51,9 @@ public class Commands {
                 .addChild(new CommandNode("info", "Get info about the Dragon Egg game", Commands::dragon_egg$info)
                     .withOptionalPermission(Perms.INFO)
                 )
+                .addChild(new CommandNode("help", "View all commands", Commands::dragon_egg$help)
+                    .withOptionalPermission(Perms.HELP)
+                )
         );
     }
 
@@ -156,6 +159,22 @@ public class Commands {
                 .withMaximumPermission(LevelBasedPermissionSet.OWNER))),
             false
         );
+        return 0;
+    }
+
+    private static int dragon_egg$help(CommandContext<CommandSourceStack> context) {
+        var msg = Component.literal("Available commands:").withStyle(Style.EMPTY.withBold(true));
+        for (CommandNode node : ALL) {
+            for (CommandNode actionNode : node.getActionNodes()) {
+                msg.append(String.format(
+                    "  %s%s - %s",
+                    net.minecraft.commands.Commands.COMMAND_PREFIX,
+                    String.join(" ", actionNode.getPath()),
+                    actionNode.description() != null ? actionNode.description() : "No description provided"
+                ));
+            }
+        }
+        context.getSource().sendSuccess(() -> msg, false);
         return 0;
     }
 }
