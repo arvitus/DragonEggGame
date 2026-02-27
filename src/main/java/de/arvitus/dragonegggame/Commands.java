@@ -12,6 +12,7 @@ import eu.pb4.placeholders.api.node.TextNode;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.ModMetadata;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -154,15 +155,24 @@ public class Commands {
     }
 
     private static int dragon_egg$help(CommandContext<CommandSourceStack> context) {
-        var msg = Component.literal("Available commands:").withStyle(Style.EMPTY.withBold(true));
+        var msg = Component.empty().append(Component
+            .literal("Available commands:")
+            .withStyle(Style.EMPTY.withBold(true)));
         for (CommandNode node : ALL) {
             for (CommandNode actionNode : node.getActionNodes()) {
-                msg.append(String.format(
-                    "  %s%s - %s",
-                    net.minecraft.commands.Commands.COMMAND_PREFIX,
-                    String.join(" ", actionNode.getPath()),
-                    actionNode.description() != null ? actionNode.description() : "No description provided"
-                ));
+                if (!actionNode.testCondition(context.getSource()))
+                    continue;
+                var cmd = net.minecraft.commands.Commands.COMMAND_PREFIX + String.join(" ", actionNode.getPath());
+                var component = Component
+                    .literal("\n  " + cmd)
+                    .withStyle(Style.EMPTY
+                        .withHoverEvent(new HoverEvent.ShowText(Component.literal(cmd)))
+                        .withClickEvent(new ClickEvent.SuggestCommand(cmd)));
+                if (actionNode.description() != null)
+                    component.append(" - ").append(Component
+                        .literal(actionNode.description())
+                        .withStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+                msg.append(component);
             }
         }
         context.getSource().sendSuccess(() -> msg, false);
