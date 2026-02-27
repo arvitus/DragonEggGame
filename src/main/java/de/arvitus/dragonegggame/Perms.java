@@ -3,6 +3,7 @@ package de.arvitus.dragonegggame;
 class Perms {
     public static final String BASE = "deg";
     public static final String ADMIN = child(BASE, "admin");
+    public static final String MOD_INFO = child(ADMIN, "info");
     public static final String RELOAD = child(ADMIN, "reload");
     public static final String BEARER = child(BASE, "bearer");
     public static final String INFO = child(BASE, "info");

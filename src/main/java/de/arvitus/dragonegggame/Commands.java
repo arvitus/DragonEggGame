@@ -33,7 +33,7 @@ public class Commands {
     static {
         add(
             new CommandNode(DragonEggGame.MOD_ID_ALIAS, "Get info about the mod", Commands::deg$info)
-                .withPermission(Perms.ADMIN, PermissionLevel.OWNERS)
+                .withPermission(Perms.MOD_INFO, PermissionLevel.OWNERS)
                 .addChild(new CommandNode("reload", "Reload config and data", Commands::reload)
                     .withPermission(Perms.RELOAD, PermissionLevel.OWNERS)
                 )
