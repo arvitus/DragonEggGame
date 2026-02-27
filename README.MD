@@ -68,7 +68,8 @@ These are the rules we came up with for our server. Of course, you can change th
 |----------------------|------------------------------------------------------|--------------------|-------------|:-------:|
 | `/dragon_egg bearer` | Info about the current bearer and the egg's location | `deg.bearer`       | `ALL (0)`   |    ✅    |
 | `/dragon_egg info`   | Info about the game                                  | `deg.info`         | `ALL (0)`   |    ✅    |
-| `/deg`               | Mod info                                             | `deg.admin`        | `OWNER (4)` |    ❌    |
+| `/dragon_egg help`   | List available commands                              | `deg.help`         | `ALL (0)`   |    ✅    |
+| `/deg`               | Mod info                                             | `deg.admin.info`   | `OWNER (4)` |    ❌    |
 | `/deg reload`        | Reloads the config                                   | `deg.admin.reload` | `OWNER (4)` |    ❌    |
 
 <h6 id="placeholders"></h6>
