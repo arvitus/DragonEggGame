@@ -6,9 +6,9 @@ import de.arvitus.dragonegggame.config.Config;
 import de.arvitus.dragonegggame.config.Data;
 import de.arvitus.dragonegggame.config.MessageString;
 import de.arvitus.dragonegggame.features.Actions;
+import de.arvitus.dragonegggame.utils.CommandNode;
 import eu.pb4.placeholders.api.PlaceholderContext;
 import eu.pb4.placeholders.api.node.TextNode;
-import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.ModMetadata;
@@ -19,39 +19,51 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import static de.arvitus.dragonegggame.DragonEggGame.CONFIG;
 import static de.arvitus.dragonegggame.DragonEggGame.LOGGER;
-import static net.minecraft.commands.Commands.literal;
 
 public class Commands {
+    private static final List<CommandNode> ALL = new ArrayList<>();
+
+    static {
+        add(
+            new CommandNode(DragonEggGame.MOD_ID_ALIAS, "Get info about the mod", Commands::deg$info)
+                .withPermission(Perms.ADMIN, 4)
+                .addChild(new CommandNode("reload", "Reload config and data", Commands::reload)
+                    .withPermission(Perms.RELOAD, 4)
+                )
+        );
+        add(
+            new CommandNode("dragon_egg")
+                .withOptionalPermission(Perms.BASE)
+                .addChild(new CommandNode(
+                        "bearer",
+                        "Get info about the current bearer of the Dragon Egg",
+                        Commands::dragon_egg$bearer
+                    )
+                        .withOptionalPermission(Perms.BEARER)
+                )
+                .addChild(new CommandNode("info", "Get info about the Dragon Egg game", Commands::dragon_egg$info)
+                    .withOptionalPermission(Perms.INFO)
+                )
+        );
+    }
+
+    public static void add(CommandNode node) {
+        ALL.add(node);
+    }
+
+    public static List<CommandNode> get() {
+        return List.copyOf(ALL);
+    }
+
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            dispatcher.register(
-                literal(DragonEggGame.MOD_ID_ALIAS)
-                    .requires(Permissions.require(Perms.ADMIN, 4))
-                    .then(
-                        literal("reload")
-                            .requires(Permissions.require(Perms.RELOAD, 4))
-                            .executes(Commands::reload)
-                    )
-                    .executes(Commands::deg$info)
-            );
-
-            dispatcher.register(
-                literal("dragon_egg")
-                    .requires(Permissions.require(Perms.BASE, true))
-                    .then(
-                        literal("bearer")
-                            .requires(Permissions.require(Perms.BEARER, true))
-                            .executes(Commands::dragon_egg$bearer)
-                    )
-                    .then(
-                        literal("info")
-                            .requires(Permissions.require(Perms.INFO, true))
-                            .executes(Commands::dragon_egg$info)
-                    )
-            );
+            for (CommandNode node : ALL)
+                dispatcher.register(node.build());
         });
     }
 
