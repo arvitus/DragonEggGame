@@ -101,6 +101,10 @@ public record CommandNode(
         return path;
     }
 
+    public boolean testCondition(CommandSourceStack source) {
+        return condition == null || condition.test(source);
+    }
+
     public boolean hasCondition() {
         return condition != null;
     }
