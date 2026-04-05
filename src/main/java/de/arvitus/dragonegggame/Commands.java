@@ -7,7 +7,7 @@ import de.arvitus.dragonegggame.config.Data;
 import de.arvitus.dragonegggame.config.MessageString;
 import de.arvitus.dragonegggame.features.Actions;
 import de.arvitus.dragonegggame.utils.CommandNode;
-import eu.pb4.placeholders.api.PlaceholderContext;
+import eu.pb4.placeholders.api.ServerPlaceholderContext;
 import eu.pb4.placeholders.api.node.TextNode;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
@@ -131,7 +131,7 @@ public class Commands {
         CommandSourceStack source = context.getSource();
         Data data = DragonEggAPI.getData();
         if (data == null) {
-            source.sendFailure(CONFIG.messages.bearerError.node.toText(PlaceholderContext.of(
+            source.sendFailure(CONFIG.messages.bearerError.node.toComponent(ServerPlaceholderContext.of(
                 source.withMaximumPermission(LevelBasedPermissionSet.OWNER)
             )));
             return -1;
@@ -147,7 +147,7 @@ public class Commands {
 
         TextNode node = message.node;
         source.sendSuccess(
-            () -> node.toText(PlaceholderContext.of(source.withMaximumPermission(LevelBasedPermissionSet.OWNER))),
+            () -> node.toComponent(ServerPlaceholderContext.of(source.withMaximumPermission(LevelBasedPermissionSet.OWNER))),
             false
         );
         return 0;
@@ -155,7 +155,7 @@ public class Commands {
 
     private static int dragon_egg$info(CommandContext<CommandSourceStack> context) {
         context.getSource().sendSuccess(
-            () -> CONFIG.messages.info.node.toText(PlaceholderContext.of(context
+            () -> CONFIG.messages.info.node.toComponent(ServerPlaceholderContext.of(context
                 .getSource()
                 .withMaximumPermission(LevelBasedPermissionSet.OWNER))),
             false

@@ -153,7 +153,7 @@ public class Config {
     public static class Messages {
         private static final NodeParser PARSER = NodeParser
             .builder()
-            .globalPlaceholders()
+            .serverPlaceholders()
             .quickText()
             .staticPreParsing()
             .build();

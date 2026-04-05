@@ -2,7 +2,7 @@ package de.arvitus.dragonegggame;
 
 import de.arvitus.dragonegggame.api.DragonEggAPI;
 import de.arvitus.dragonegggame.config.Data;
-import eu.pb4.placeholders.api.PlaceholderContext;
+import eu.pb4.placeholders.api.ServerPlaceholderContext;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,8 +35,8 @@ public class MCIntegration {
             ServerPlayer player = server.getPlayerList().getPlayer(newBearer);
             if (player == null) return;
             server.getPlayerList().broadcastSystemMessage(
-                CONFIG.messages.bearerChanged.node.toText(
-                    PlaceholderContext.of(player
+                CONFIG.messages.bearerChanged.node.toComponent(
+                    ServerPlaceholderContext.of(player
                         .createCommandSourceStack()
                         .withMaximumPermission(LevelBasedPermissionSet.OWNER))
                 ),

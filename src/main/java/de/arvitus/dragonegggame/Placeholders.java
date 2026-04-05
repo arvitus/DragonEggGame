@@ -4,15 +4,16 @@ import de.arvitus.dragonegggame.api.APIUtils;
 import de.arvitus.dragonegggame.api.DragonEggAPI;
 import de.arvitus.dragonegggame.config.Config;
 import de.arvitus.dragonegggame.config.Data;
-import eu.pb4.placeholders.api.PlaceholderHandler;
+import eu.pb4.placeholders.api.Placeholder;
 import eu.pb4.placeholders.api.PlaceholderResult;
+import eu.pb4.placeholders.api.ServerPlaceholderContext;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.permissions.PermissionLevel;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 
 import java.util.Map;
@@ -20,19 +21,19 @@ import java.util.Map;
 import static de.arvitus.dragonegggame.DragonEggGame.CONFIG;
 
 public class Placeholders {
-    public static final Map<Identifier, PlaceholderHandler> PLACEHOLDERS = Map.of(
+    public static final Map<Identifier, Placeholder.Handler<ServerPlaceholderContext, String>> PLACEHOLDERS = Map.of(
         modIdentifier("bearer"),
         (ctx, arg) -> PlaceholderResult.value(APIUtils.getBearer()),
         modIdentifier("exact_pos"),
         (ctx, arg) -> {
-            if (!Permissions.check(ctx.source(), Perms.EXACT_POS_PLACEHOLDER, PermissionLevel.ADMINS))
+            if (!Permissions.check(ctx.commandSourceStack(), Perms.EXACT_POS_PLACEHOLDER, PermissionLevel.ADMINS))
                 return PlaceholderResult.invalid("No Permission");
             if (DragonEggAPI.getData() == null) return PlaceholderResult.invalid("No Data");
             return PlaceholderResult.value(DragonEggAPI.getData().getBlockPos().toShortString());
         },
         modIdentifier("randomized_pos"),
         (ctx, arg) -> {
-            if (!Permissions.check(ctx.source(), Perms.RANDOMIZED_POS_PLACEHOLDER, PermissionLevel.ADMINS))
+            if (!Permissions.check(ctx.commandSourceStack(), Perms.RANDOMIZED_POS_PLACEHOLDER, PermissionLevel.ADMINS))
                 return PlaceholderResult.invalid("No Permission");
             if (DragonEggAPI.getData() == null) return PlaceholderResult.invalid("No Data");
             return PlaceholderResult.value(DragonEggAPI.getData().getRandomizedPosition().toShortString());
@@ -53,12 +54,13 @@ public class Placeholders {
         modIdentifier("item"),
         (ctx, arg) -> {
             // from https://github.com/Patbox/TextPlaceholderAPI/blob/276a9c0f19e0ceed0140ce2e028fa438f3859632/src/main/java/eu/pb4/placeholders/impl/GeneralUtils.java#L188
-            ItemStack stack = Items.DRAGON_EGG.getDefaultInstance();
+            var template = new ItemStackTemplate(Items.DRAGON_EGG);
+            var stack = template.create();
             MutableComponent mutableText = Component
                 .empty()
                 .append(stack.getHoverName())
                 .withStyle(stack.getRarity().color())
-                .withStyle(style -> style.withHoverEvent(new HoverEvent.ShowItem(stack)));
+                .withStyle(style -> style.withHoverEvent(new HoverEvent.ShowItem(template)));
             return PlaceholderResult.value(mutableText);
         }
     );
@@ -68,6 +70,6 @@ public class Placeholders {
     }
 
     public static void register() {
-        PLACEHOLDERS.forEach(eu.pb4.placeholders.api.Placeholders::register);
+        PLACEHOLDERS.forEach(eu.pb4.placeholders.api.Placeholders::registerServer);
     }
 }

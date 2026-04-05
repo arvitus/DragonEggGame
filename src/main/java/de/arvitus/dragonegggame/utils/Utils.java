@@ -16,7 +16,6 @@ import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -94,12 +93,12 @@ public class Utils {
             .ofNullable(components.get(DataComponents.CONTAINER))
             .ifPresent(containerComponent -> containerComponent
                 .nonEmptyItems()
-                .forEach(itemStack -> count.addAndGet(countDragonEgg(itemStack, currentDepth + 1))));
+                .forEach(template -> count.addAndGet(countDragonEgg(template.create(), currentDepth + 1))));
         Optional
             .ofNullable(components.get(DataComponents.BUNDLE_CONTENTS))
             .ifPresent(bundleComponent -> bundleComponent
                 .items()
-                .forEach(itemStack -> count.addAndGet(countDragonEgg(itemStack, currentDepth + 1))));
+                .forEach(template -> count.addAndGet(countDragonEgg(template.create(), currentDepth + 1))));
 
         return count.get();
     }

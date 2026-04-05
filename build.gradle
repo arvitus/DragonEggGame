@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.14-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
     id 'com.gradleup.shadow' version '9.2.2'
 }
 
@@ -18,15 +18,14 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // required mods
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     // included mods
-    include modImplementation("me.lucko:fabric-permissions-api:${project.permissions_api_version}")
-    include modImplementation("eu.pb4:placeholder-api:${project.placeholder_api_version}")
+    include implementation("me.lucko:fabric-permissions-api:${project.permissions_api_version}")
+    include implementation("eu.pb4:placeholder-api:${project.placeholder_api_version}")
 
     // optional mods
     compileOnly "de.bluecolored:bluemap-api:${project.bluemap_api_version}"
@@ -37,9 +36,9 @@ dependencies {
 }
 
 tasks {
-    remapJar {
+    jar {
         dependsOn(shadowJar)
-        inputFile.set(shadowJar.archiveFile)
+        archiveFile.set(shadowJar.archiveFile)
     }
 
     shadowJar {
@@ -65,7 +64,7 @@ tasks {
     }
 }
 
-def targetJavaVersion = 21
+def targetJavaVersion = 25
 tasks.withType(JavaCompile).configureEach {
     // ensure that the encoding is set to UTF-8, no matter what the system default is
     // this fixes some edge cases with special characters not displaying correctly

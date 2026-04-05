@@ -5,7 +5,7 @@ import de.arvitus.dragonegggame.utils.Utils;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.PlayerEnderChestContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -28,21 +28,21 @@ public abstract class AbstractContainerMenuMixin {
     public abstract ItemStack getCarried();
 
     @Inject(method = "doClick", at = @At("HEAD"), cancellable = true)
-    private void blockDragonEggInsertion(int i, int j, ClickType clickType, Player player, CallbackInfo ci) {
+    private void blockDragonEggInsertion(int i, int j, ContainerInput containerInput, Player player, CallbackInfo ci) {
         if (i < 0) return;
 
         var isEnderChestMenu = slots.stream().anyMatch(s -> s.container instanceof PlayerEnderChestContainer);
-        if (isEnderChestMenu && DragonEggGame.CONFIG.blockEnderChest && checkDragonEgg(i, j, clickType, player))
+        if (isEnderChestMenu && DragonEggGame.CONFIG.blockEnderChest && checkDragonEgg(i, j, containerInput, player))
             ci.cancel();
     }
 
     @Unique
-    private boolean checkDragonEgg(int i, int j, ClickType clickType, Player player) {
+    private boolean checkDragonEgg(int i, int j, ContainerInput containerInput, Player player) {
         var slot = slots.get(i);
         var playerInventory = player.getInventory();
         var isPlayerSlot = slot.container == playerInventory;
 
-        var stack = switch (clickType) {
+        var stack = switch (containerInput) {
             case QUICK_MOVE -> isPlayerSlot ? slot.getItem() : ItemStack.EMPTY;
             case SWAP -> isPlayerSlot ? ItemStack.EMPTY : playerInventory.getItem(j);
             default -> isPlayerSlot ? ItemStack.EMPTY : getCarried();
