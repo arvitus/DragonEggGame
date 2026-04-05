@@ -1,5 +1,7 @@
 package de.arvitus.dragonegggame.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import de.arvitus.dragonegggame.api.DragonEggAPI;
 import de.arvitus.dragonegggame.utils.Utils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -9,9 +11,6 @@ import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Inspired by
@@ -23,9 +22,11 @@ public abstract class PlayerInventoryMixin implements Inventory {
     @Final
     public PlayerEntity player;
 
-    @Inject(method = "insertStack(Lnet/minecraft/item/ItemStack;)Z", at = @At("RETURN"))
-    private void onItemInsertion(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        ItemStack itemStack = stack.copyWithCount(cir.getReturnValue() ? 1 : 0);
-        if (Utils.isOrHasDragonEgg(itemStack)) DragonEggAPI.updatePosition(this.player);
+    @WrapMethod(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z")
+    private boolean onItemInsertion(int i, ItemStack itemStack, Operation<Boolean> original) {
+        var stack = itemStack.copy();
+        var success = original.call(i, itemStack);
+        if (success && Utils.isOrHasDragonEgg(stack)) DragonEggAPI.updatePosition(this.player);
+        return success;
     }
 }
