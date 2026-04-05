@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import de.arvitus.dragonegggame.api.DragonEggAPI;
 import de.arvitus.dragonegggame.utils.Utils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +22,7 @@ import java.util.UUID;
 import static de.arvitus.dragonegggame.DragonEggGame.*;
 
 public class Data {
-    public transient @Nullable Level world;
+    public transient @Nullable ServerLevel world;
     @SerializedName("world")
     public @NotNull String worldId = "minecraft:overworld";
     @SerializedName("entity_uuid")
