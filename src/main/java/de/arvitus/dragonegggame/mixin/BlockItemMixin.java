@@ -16,6 +16,6 @@ public abstract class BlockItemMixin {
 
     @ModifyReturnValue(method = "canFitInsideContainerItems", at = @At("RETURN"))
     private boolean blockDragonEggInsertion(boolean original) {
-        return original && getBlock() != Blocks.DRAGON_EGG && DragonEggGame.CONFIG.blockContainerItems;
+        return original && !(getBlock() == Blocks.DRAGON_EGG && DragonEggGame.CONFIG.blockContainerItems);
     }
 }
