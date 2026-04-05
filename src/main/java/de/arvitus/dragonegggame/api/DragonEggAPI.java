@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -156,7 +157,7 @@ public class DragonEggAPI {
         }
 
         data.type = type;
-        data.world = world;
+        data.world = (ServerLevel) world;
         data.worldId = world.dimension().identifier().toString();
         data.setPosition(pos);
 
