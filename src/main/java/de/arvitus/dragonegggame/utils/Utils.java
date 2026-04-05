@@ -105,48 +105,6 @@ public class Utils {
     }
 
     /**
-     * Removes a dragon egg from the given container ItemStack e.g. a shulker box or a bundle.
-     * This method is recursive and will check all nested ItemStacks up to a depth of 10.
-     * So a dragon egg inside a bundle inside a shulker box item will still be detected.
-     *
-     * @param containerStack The ItemStack to remove the dragon egg from
-     * @return The removed dragon egg ItemStack or null if no dragon egg was found
-     */
-    public static ItemStack removeDragonEgg(ItemStack containerStack) {
-        int count = 0;
-        if (!containerStack.is(Items.DRAGON_EGG)) {
-            count = countDragonEgg(containerStack, 0);
-            removeDragonEgg(containerStack, 0);
-        }
-        return Items.DRAGON_EGG.getDefaultInstance().copyWithCount(count);
-    }
-
-    private static void removeDragonEgg(ItemStack containerStack, int currentDepth) {
-        if (containerStack.isEmpty() || currentDepth >= 10) return;
-
-        Optional
-            .ofNullable(containerStack.get(DataComponents.CONTAINER))
-            .ifPresent(containerComponent -> containerComponent.nonEmptyItems().forEach(itemStack -> {
-                if (itemStack.is(Items.DRAGON_EGG)) itemStack.setCount(0);
-                else removeDragonEgg(itemStack, currentDepth + 1);
-            }));
-
-        Optional
-            .ofNullable(containerStack.get(DataComponents.BUNDLE_CONTENTS))
-            .ifPresent(bundleComponent -> {
-                BundleContents.Mutable builder =
-                    new BundleContents.Mutable(BundleContents.EMPTY);
-                bundleComponent.items().forEach(itemStack -> {
-                    if (!itemStack.isEmpty() && !itemStack.is(Items.DRAGON_EGG)) {
-                        removeDragonEgg(itemStack, currentDepth + 1);
-                        builder.tryInsert(itemStack);
-                    }
-                });
-                containerStack.set(DataComponents.BUNDLE_CONTENTS, builder.toImmutable());
-            });
-    }
-
-    /**
      * Spawns the given number of dragon eggs at the world spawn position
      *
      * @param server The MinecraftServer instance
