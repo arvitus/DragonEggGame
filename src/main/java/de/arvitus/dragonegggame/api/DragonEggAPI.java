@@ -110,6 +110,8 @@ public class DragonEggAPI {
         @NotNull Level world,
         @Nullable Entity entity
     ) {
+        if (world.isClientSide()) return;
+
         if (data == null) {
             LOGGER.warn("API not ready, deferring position update");
             deferredUpdates.add(new DeferredUpdate(type, pos, world, entity));
