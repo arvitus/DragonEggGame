@@ -1,6 +1,5 @@
 plugins {
     id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
-    id 'com.gradleup.shadow' version '9.2.2'
 }
 
 version = "${project.mod_version}-${project.minecraft_version}"
@@ -14,6 +13,15 @@ repositories {
     mavenCentral()
     maven { url "https://maven.nucleoid.xyz/" }
     maven { url 'https://repo.bluecolored.de/releases' }
+}
+
+configurations {
+    transitiveInclude {
+        transitive = true
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    implementation.extendsFrom(transitiveInclude)
 }
 
 dependencies {
@@ -31,22 +39,12 @@ dependencies {
     compileOnly "de.bluecolored:bluemap-api:${project.bluemap_api_version}"
 
     // other dependencies
-    shadow implementation("org.spongepowered:configurate-hocon:${project.configurate_version}")
+    transitiveInclude("org.spongepowered:configurate-hocon:${project.configurate_version}")
     include implementation("net.objecthunter:exp4j:${project.exp4j_version}")
 }
 
 tasks {
     jar {
-        dependsOn(shadowJar)
-        archiveFile.set(shadowJar.archiveFile)
-    }
-
-    shadowJar {
-        relocationPrefix = "${project.group}.${project.mod_id}.shadow"
-        enableAutoRelocation = true
-        configurations = [project.configurations.shadow]
-        minimize()
-
         from("LICENSE")
     }
 
@@ -61,6 +59,12 @@ tasks {
         filesMatching("fabric.mod.json") {
             expand(map)
         }
+    }
+}
+
+afterEvaluate {
+    configurations.transitiveInclude.resolvedConfiguration.resolvedArtifacts.each {
+        dependencies.add("include", it.moduleVersion.id.toString())
     }
 }
 
@@ -84,5 +88,5 @@ java {
     // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
     // if it is present.
     // If you remove this line, sources will not be generated.
-    withSourcesJar()
+    // withSourcesJar()
 }
