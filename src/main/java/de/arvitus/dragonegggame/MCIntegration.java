@@ -1,7 +1,10 @@
 package de.arvitus.dragonegggame;
 
+import de.arvitus.dragonegggame.api.APIUtils;
 import de.arvitus.dragonegggame.api.DragonEggAPI;
+import de.arvitus.dragonegggame.api.Event;
 import de.arvitus.dragonegggame.config.Data;
+import de.arvitus.dragonegggame.features.Actions;
 import eu.pb4.placeholders.api.PlaceholderContext;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
@@ -10,6 +13,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,9 +28,9 @@ public class MCIntegration {
 
     public static void onUpdate(Data data) {
         if (data.playerUUID != null) {
-            if (BEARER != null && !data.playerUUID.equals(BEARER)) announceChange(data.playerUUID);
+            if (!data.playerUUID.equals(BEARER)) announceChange(data.playerUUID);
             BEARER = data.playerUUID;
-        } else BEARER = UUID.randomUUID();
+        } else BEARER = null;
     }
 
     public static void announceChange(UUID newBearer) {
@@ -51,6 +55,15 @@ public class MCIntegration {
                     RandomSource.create().nextLong()
                 )
             );
+
+            var data = DragonEggAPI.getData();
+            if (data == null || BEARER == null) return;
+
+            var placeholders = new HashMap<>(Actions.placeholders);
+            placeholders.put("old_bearer_id", () -> BEARER.toString());
+            placeholders.put("old_bearer", () -> APIUtils.gameProfileFromUUID(server, BEARER).name());
+
+            Actions.emitEvent("bearer_changed", new Event<>(Actions.getVariables(data), placeholders, null));
         });
     }
 }
