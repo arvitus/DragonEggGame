@@ -9,7 +9,6 @@ import de.arvitus.dragonegggame.config.Action;
 import de.arvitus.dragonegggame.config.Condition.Variables;
 import de.arvitus.dragonegggame.config.Data;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.MinecraftServer;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +20,14 @@ import java.util.function.Supplier;
 import static de.arvitus.dragonegggame.DragonEggGame.*;
 
 public class Actions {
+    public static final Map<String, Supplier<String>> placeholders = Map.of(
+        "bearer_id", () -> {
+            Data data = DragonEggAPI.getData();
+            return data != null && data.playerUUID != null ? data.playerUUID.toString() : "@a[predicate=deg:is_bearer]";
+        },
+        "bearer", () -> APIUtils.getBearerName().getString(),
+        "nearby", () -> "@a[predicate=deg:is_nearby]"
+    );
     private static final Map<Identifier, HashSet<Consumer<Event<?>>>> registeredEventListeners = new HashMap<>();
     private static final Map<DragonEggAPI.PositionType, List<String>> positionTypeToTimeVariables = Map.of(
         DragonEggAPI.PositionType.BLOCK, List.of(
@@ -47,14 +54,6 @@ public class Actions {
             Variables.CONTINUOUS_FALLING_BLOCK_TIME,
             Variables.TOTAL_FALLING_BLOCK_TIME
         )
-    );
-    private static final Map<String, Supplier<String>> placeholders = Map.of(
-        "bearer_id", () -> {
-            Data data = DragonEggAPI.getData();
-            return data != null && data.playerUUID != null ? data.playerUUID.toString() : "@a[predicate=deg:is_bearer]";
-        },
-        "bearer", () -> APIUtils.getBearer().getString(),
-        "nearby", () -> "@a[predicate=deg:is_nearby]"
     );
 
     public static void register() {
@@ -101,46 +100,62 @@ public class Actions {
             return;
         }
 
-        Map<String, Double> variables = new HashMap<>(Map.of(
+        var variables = getVariables(data);
+
+        Event<Void> event = new Event<>(variables, placeholders, null);
+        emitEvent(data.type.name().toLowerCase(), event);
+
+        Events.TICK_ACTIONS.put(
+            "actions_tick", (ticks, server) -> {
+                if (ticks % 20 != 0) return;
+                variables.putAll(getTimeVariables(data));
+                emitEvent("second", event);
+            }
+        );
+    }
+
+    public static HashMap<String, Double> getVariables(Data data) {
+        var variables = new HashMap<String, Double>();
+        if (data.type == null) return variables;
+        variables.putAll(getPositionVariables(data));
+        variables.putAll(getTimeVariables(data));
+        return variables;
+    }
+
+    private static Map<String, Double> getPositionVariables(Data data) {
+        if (data.type == null) return Map.of();
+
+        return Map.of(
             Variables.X, data.getPosition().x,
             Variables.Y, data.getPosition().y,
             Variables.Z, data.getPosition().z,
             Variables.RAND_X, (double) data.getRandomizedPosition().getX(),
             Variables.RAND_Y, (double) data.getRandomizedPosition().getY(),
             Variables.RAND_Z, (double) data.getRandomizedPosition().getZ()
-        ));
-
-        Event<Void> event = new Event<>(variables, placeholders, null);
-
-        Consumer<MinecraftServer> calculateVariables = server -> {
-            long currentTime = server.overworld().getGameTime();
-            variables.put(Variables.BEARER_TIME, Math.floor(data.getBearerTime(currentTime) / 20d));
-            for (DragonEggAPI.PositionType type : DragonEggAPI.PositionType.values()) {
-                List<String> value = positionTypeToTimeVariables.get(type);
-                if (type == data.type) {
-                    long continuousTime = data.getContinuousTime(currentTime);
-                    variables.put(value.getFirst(), Math.floor(continuousTime / 20d));
-                    variables.put(value.get(1), Math.floor((data.getDuration(type) + continuousTime) / 20d));
-                    continue;
-                }
-                variables.put(value.getFirst(), 0d);
-                variables.put(value.get(1), Math.floor(data.getDuration(type) / 20d));
-            }
-        };
-
-        if (data.world != null) calculateVariables.accept(data.world.getServer());
-        emitEvent(data.type.name().toLowerCase(), event);
-
-        Events.TICK_ACTIONS.put(
-            "actions_tick", (ticks, server) -> {
-                if (ticks % 20 != 0) return;
-                calculateVariables.accept(server);
-                emitEvent("second", event);
-            }
         );
     }
 
-    private static void emitEvent(String eventName, Event<?> event) {
+    private static Map<String, Double> getTimeVariables(Data data) {
+        if (data.type == null || data.world == null) return Map.of();
+
+        var variables = new HashMap<String, Double>();
+        long currentTime = data.world.getServer().overworld().getGameTime();
+        variables.put(Variables.BEARER_TIME, Math.floor(data.getBearerTime(currentTime) / 20d));
+        for (DragonEggAPI.PositionType type : DragonEggAPI.PositionType.values()) {
+            List<String> value = positionTypeToTimeVariables.get(type);
+            if (type == data.type) {
+                long continuousTime = data.getContinuousTime(currentTime);
+                variables.put(value.getFirst(), Math.floor(continuousTime / 20d));
+                variables.put(value.get(1), Math.floor((data.getDuration(type) + continuousTime) / 20d));
+                continue;
+            }
+            variables.put(value.getFirst(), 0d);
+            variables.put(value.get(1), Math.floor(data.getDuration(type) / 20d));
+        }
+        return variables;
+    }
+
+    public static void emitEvent(String eventName, Event<?> event) {
         try {
             EventsApi.emit(Identifier.fromNamespaceAndPath(MOD_ID_ALIAS, eventName), event);
         } catch (Exception e) {
