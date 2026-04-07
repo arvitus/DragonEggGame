@@ -23,7 +23,7 @@ import static de.arvitus.dragonegggame.DragonEggGame.CONFIG;
 public class Placeholders {
     public static final Map<Identifier, Placeholder.Handler<ServerPlaceholderContext, String>> PLACEHOLDERS = Map.of(
         modIdentifier("bearer"),
-        (ctx, arg) -> PlaceholderResult.value(APIUtils.getBearer()),
+        (ctx, arg) -> PlaceholderResult.value(APIUtils.getBearerName()),
         modIdentifier("exact_pos"),
         (ctx, arg) -> {
             if (!Permissions.check(ctx.commandSourceStack(), Perms.EXACT_POS_PLACEHOLDER, PermissionLevel.ADMINS))
