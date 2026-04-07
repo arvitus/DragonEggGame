@@ -18,10 +18,12 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.entity.Relative;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static de.arvitus.dragonegggame.DragonEggGame.CONFIG;
 import static de.arvitus.dragonegggame.DragonEggGame.LOGGER;
@@ -35,6 +37,12 @@ public class Commands {
                 .withPermission(Perms.MOD_INFO, 4)
                 .addChild(new CommandNode("reload", "Reload config and data", Commands::reload)
                     .withPermission(Perms.RELOAD, 4)
+                )
+                .addChild(new CommandNode(
+                        "teleport",
+                        "Teleport to the Dragon Egg location",
+                        Commands::teleportToDragonEgg
+                    ).withPermission(Perms.TELEPORT, 4)
                 )
         );
         add(
@@ -176,6 +184,28 @@ public class Commands {
             }
         }
         context.getSource().sendSuccess(() -> msg, false);
+        return 0;
+    }
+
+    private static int teleportToDragonEgg(CommandContext<CommandSourceStack> context) {
+        var data = DragonEggAPI.getData();
+        if (data == null || data.world == null || !context.getSource().isPlayer()) {
+            context.getSource().sendFailure(Component.literal("Currently not available"));
+            return -1;
+        }
+
+        var pos = data.getPosition();
+        var player = context.getSource().getPlayer();
+        Objects.requireNonNull(player).teleportTo(
+            data.world,
+            pos.x,
+            pos.y,
+            pos.z,
+            Relative.ROTATION,
+            0,
+            0,
+            true
+        );
         return 0;
     }
 }
