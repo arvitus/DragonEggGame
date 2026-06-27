@@ -99,7 +99,7 @@ public class DragonEggAPI {
     }
 
     public static void updatePosition(@NotNull PositionType type, @NotNull BlockPos pos, @NotNull Level world) {
-        updatePosition(type, pos.getCenter(), world, null);
+        updatePosition(type, Vec3.atCenterOf(pos), world, null);
     }
 
     private static synchronized void updatePosition(
@@ -151,7 +151,7 @@ public class DragonEggAPI {
         Level oldWorld = data.world != null ? data.world : world;
         if (
             !oldWorld.equals(world) ||
-            !pos.closerThan(data.getRandomizedPosition().getCenter(), CONFIG.searchRadius)
+            !pos.closerThan(Vec3.atCenterOf(data.getRandomizedPosition()), CONFIG.searchRadius)
         ) {
             data.clearRandomizedPosition();
         }

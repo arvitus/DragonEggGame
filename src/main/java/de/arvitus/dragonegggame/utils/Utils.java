@@ -112,7 +112,7 @@ public class Utils {
      */
     public static @Nullable ItemEntity spawnDragonEggAtSpawn(@NotNull MinecraftServer server, int count) {
         ServerLevel overworld = server.overworld();
-        Vec3 spawnPos = overworld.getRespawnData().pos().getCenter();
+        Vec3 spawnPos = Vec3.atCenterOf(overworld.getRespawnData().pos());
         ItemEntity itemCopy = new ItemEntity(
             overworld,
             spawnPos.x,
@@ -133,10 +133,7 @@ public class Utils {
     public static boolean isNearServerSpawn(Entity entity) {
         ServerLevel overworld = Objects.requireNonNull(entity.level().getServer()).overworld();
         return entity.level() == overworld && entity.position().closerThan(
-            overworld
-                .getRespawnData()
-                .pos()
-                .getCenter(), 3
+            Vec3.atCenterOf(overworld.getRespawnData().pos()), 3
         );
     }
 
