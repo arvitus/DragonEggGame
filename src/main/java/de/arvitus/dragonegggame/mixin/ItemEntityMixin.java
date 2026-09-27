@@ -53,7 +53,7 @@ public abstract class ItemEntityMixin extends Entity {
 
             if (stack.is(Items.DRAGON_EGG) && Utils.isNearServerSpawn(this)) {
                 this.setUnlimitedLifetime();
-                this.setInvulnerable(true);
+                this.setPermanentlyInvulnerable(true);
             }
 
             DragonEggAPI.updatePosition(this);
