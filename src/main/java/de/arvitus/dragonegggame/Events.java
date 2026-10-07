@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
+import static de.arvitus.dragonegggame.DragonEggGame.CONFIG;
 import static de.arvitus.dragonegggame.DragonEggGame.LOGGER;
 
 public class Events {
@@ -36,7 +37,6 @@ public class Events {
         new LinkedHashMap<>();
 
     public static void register() {
-        
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             DragonEggGame.server = server;
             DragonEggAPI.init();
@@ -147,6 +147,10 @@ public class Events {
         });
 
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+            if (!CONFIG.rightClickPickupEnabled || (CONFIG.rightClickPickupRequiresEmptyHand && !player.getItemInHand(hand).isEmpty())) {
+                return InteractionResult.PASS;
+            }
+
             if (!world.getBlockState(hitResult.getBlockPos()).is(Blocks.DRAGON_EGG)) {
                 return InteractionResult.PASS;
             }
