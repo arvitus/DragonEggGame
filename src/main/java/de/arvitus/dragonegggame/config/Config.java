@@ -50,9 +50,9 @@ public class Config {
     public String pointMarkerIcon = "https://minecraft.wiki/images/thumb/Dragon_Egg_JE4.png/150px-Dragon_Egg_JE4.png";
     @Comment("The color of the BlueMap marker as a decimal value.\nDefault: 2818132 (Purple)")
     public int markerColor = 0x2b0054; // Purple
-    @Comment ("Whether to allow players to pick up the Dragon Egg by right-clicking it.\nDefault: true")
+    @Comment("Whether to allow players to pick up the Dragon Egg by right-clicking it.\nDefault: true")
     public boolean rightClickPickupEnabled = true;
-    @Comment ("Whether to require an empty hand to pick up the Dragon Egg by right-clicking it.\nDefault: true")
+    @Comment("Whether to require an empty hand to pick up the Dragon Egg by right-clicking it.\nDefault: true")
     public boolean rightClickPickupRequiresEmptyHand = true;
     @Comment("Whether to prevent the Dragon Egg from entering an Ender Chest. " +
              "\nThis will also check the contents of container items like Shulker Boxes and Bundles.")
@@ -106,6 +106,10 @@ public class Config {
             }
             if (!node.hasChild("block-ender-chest")) {
                 // blockEnderChest and blockContainerItems were added
+                update = true;
+            }
+            if (!node.hasChild("right-click-pickup-enabled")) {
+                // rightClickPickupEnabled and rightClickPickupRequiresEmptyHand were added
                 update = true;
             }
 
