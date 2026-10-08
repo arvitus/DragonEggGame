@@ -8,12 +8,15 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.TickTask;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -25,6 +28,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
+import static de.arvitus.dragonegggame.DragonEggGame.CONFIG;
 import static de.arvitus.dragonegggame.DragonEggGame.LOGGER;
 
 public class Events {
@@ -140,6 +144,23 @@ public class Events {
                 }
                 ));
             }
+        });
+
+        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+            if (!CONFIG.rightClickPickupEnabled || (CONFIG.rightClickPickupRequiresEmptyHand && !player.getItemInHand(hand).isEmpty())) {
+                return InteractionResult.PASS;
+            }
+
+            if (!world.getBlockState(hitResult.getBlockPos()).is(Blocks.DRAGON_EGG)) {
+                return InteractionResult.PASS;
+            }
+
+            if (!world.isClientSide()) {
+                world.removeBlock(hitResult.getBlockPos(), false);
+                ItemStack egg = Items.DRAGON_EGG.getDefaultInstance();
+                if (!player.getInventory().add(egg)) player.drop(egg, false, Prediction.SERVER_ONLY);
+            }
+            return InteractionResult.SUCCESS;
         });
     }
 }
