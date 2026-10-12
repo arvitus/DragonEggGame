@@ -64,13 +64,13 @@ These are the rules we came up with for our server. Of course, you can change th
 
 # Commands
 
-| Command              | Description                                          | Permission         | OP Level    | Default |
-|----------------------|------------------------------------------------------|--------------------|-------------|:-------:|
-| `/dragon_egg bearer` | Info about the current bearer and the egg's location | `deg.bearer`       | `ALL (0)`   |    ✅    |
-| `/dragon_egg info`   | Info about the game                                  | `deg.info`         | `ALL (0)`   |    ✅    |
-| `/dragon_egg help`   | List available commands                              | `deg.help`         | `ALL (0)`   |    ✅    |
-| `/deg`               | Mod info                                             | `deg.admin.info`   | `OWNER (4)` |    ❌    |
-| `/deg reload`        | Reloads the config                                   | `deg.admin.reload` | `OWNER (4)` |    ❌    |
+| Command              | Description                                          | Permission           | OP Level    | Default |
+|----------------------|------------------------------------------------------|----------------------|-------------|:-------:|
+| `/dragon_egg bearer` | Info about the current bearer and the egg's location | `deg.bearer`         | `ALL (0)`   |   ✅    |
+| `/dragon_egg info`   | Info about the game                                  | `deg.info`           | `ALL (0)`   |   ✅    |
+| `/dragon_egg help`   | List available commands                              | `deg.help`           | `ALL (0)`   |   ✅    |
+| `/deg`               | Mod info                                             | `deg.admin.info`     | `OWNER (4)` |   ❌    |
+| `/deg reload`        | Reloads the config                                   | `deg.admin.reload`   | `OWNER (4)` |   ❌    |
 | `/deg teleport`      | Teleport to the current location of the Dragon Egg   | `deg.admin.teleport` | `OWNER (4)` |   ❌    |
 
 <h6 id="placeholders"></h6>
@@ -81,11 +81,11 @@ Placeholder format: `%placeholder%`
 
 | Placeholder          | Description                                                     | Permission                        | OP Level    | Default |
 |----------------------|-----------------------------------------------------------------|-----------------------------------|-------------|:-------:|
-| `deg:bearer`         | The current bearer of the egg                                   |                                   |             |    ✅    |
-| `deg:pos`            | The current location of the egg, respecting visibility settings |                                   |             |    ✅    |
-| `deg:exact_pos`      | The exact current location of the egg                           | `deg.placeholders.exact_pos`      | `OWNER (4)` |    ❌    |
-| `deg:randomized_pos` | The randomized current location of the egg                      | `deg.placeholders.randomized_pos` | `OWNER (4)` |    ❌    |
-| `deg:item`           | A hover text displaying the Dragon Egg                          |                                   |             |    ✅    |
+| `deg:bearer`         | The current bearer of the egg                                   |                                   |             |   ✅    |
+| `deg:pos`            | The current location of the egg, respecting visibility settings |                                   |             |   ✅    |
+| `deg:exact_pos`      | The exact current location of the egg                           | `deg.placeholders.exact_pos`      | `OWNER (4)` |   ❌    |
+| `deg:randomized_pos` | The randomized current location of the egg                      | `deg.placeholders.randomized_pos` | `OWNER (4)` |   ❌    |
+| `deg:item`           | A hover text displaying the Dragon Egg                          |                                   |             |   ✅    |
 
 <h6 id="predicates"></h6>
 
