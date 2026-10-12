@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "dragonegggame",
   "version": "${version}",
-  "name": "DragonEggGame",
-  "description": "Dragon Egg Game",
+  "name": "Dragon Egg Game",
+  "description": "A Minecraft mod that adds a small, capture the flag-like minigame to your SMP, making use of the otherwise rarely used Dragon Egg.",
   "authors": [
     "arvitus"
   ],
