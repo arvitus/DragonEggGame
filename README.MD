@@ -54,6 +54,7 @@ These are the rules we came up with for our server. Of course, you can change th
     - Run [Actions](#actions) based on events (e.g. when the egg placed)
     - Customizable [BlueMap](https://modrinth.com/mod/bluemap) marker
     - Prevent the egg from entering Ender Chests or Shulker Boxes and Bundles
+    - Pick up the Dragon Egg using right-click (for claim managed servers)
 - [BlueMap](https://modrinth.com/mod/bluemap) integration. *Discord integration is also planned in the far future*
 - Custom [Placeholders](#placeholders)
 - A rudimentary API (ask on [Discord](https://discord.gg/xzdbetZVrn) or look
