@@ -47,7 +47,7 @@ These are the rules we came up with for our server. Of course, you can change th
 - Dragon Egg may teleport to spawn, when trying to destroy it or if it is otherwise lost or too far from a player
 - [Commands](#commands) for information about the game, the current bearer and the egg's (approximate) location
 - Global message when the egg is stolen
-- Extensive [customization options](#default-configs)
+- Extensive [customization options](https://github.com/arvitus/DragonEggGame/wiki/Config)
     - Per state (e.g. held by player, in chest, etc.) customization of egg visibility
     - All messages can be customized and
       support [placeholders and the QuickText format](https://placeholders.pb4.eu/user/general/)
@@ -116,15 +116,6 @@ valid Minecraft command, including commands added by other mods.
 
 **You can read more about how to use `Actions` and what you can do with them in
 the [wiki](https://github.com/arvitus/DragonEggGame/wiki/Actions)!**
-
-<h6 id="default-configs"></h6>
-
-# Default Configs
-
-The config files are too long to be included here. You can find the default configs for different mod versions here:
-
-- [**Version `1.x`**](https://github.com/arvitus/DragonEggGame/blob/main/assets/configs/config_v1.conf)
-- [**Version `2.x`**](https://github.com/arvitus/DragonEggGame/blob/main/assets/configs/config_v2.conf)
 
 <h6 id="tips"></h6>
 
