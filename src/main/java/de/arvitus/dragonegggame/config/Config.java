@@ -51,7 +51,7 @@ public class Config {
     @Comment("The color of the BlueMap marker as a decimal value.\nDefault: 2818132 (Purple)")
     public int markerColor = 0x2b0054; // Purple
     @Comment("Whether to allow players to pick up the Dragon Egg by right-clicking it.\nDefault: true")
-    public boolean rightClickPickupEnabled = true;
+    public boolean rightClickPickupEnabled = false;
     @Comment("Whether to require an empty hand to pick up the Dragon Egg by right-clicking it.\nDefault: true")
     public boolean rightClickPickupRequiresEmptyHand = true;
     @Comment("Whether to prevent the Dragon Egg from entering an Ender Chest. " +
